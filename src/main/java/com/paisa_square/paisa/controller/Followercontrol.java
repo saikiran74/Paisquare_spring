@@ -1,12 +1,8 @@
 package com.paisa_square.paisa.controller;
 
-import com.paisa_square.paisa.model.Advertise;
-import com.paisa_square.paisa.model.Comments;
-import com.paisa_square.paisa.model.Followers;
-import com.paisa_square.paisa.model.Register;
+import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Followerrepository;
-import com.paisa_square.paisa.serice.Advertiseservice;
-import com.paisa_square.paisa.serice.Commentservice;
+import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.serice.Followerservice;
 import com.paisa_square.paisa.serice.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +15,37 @@ public class Followercontrol {
     @Autowired
     private Followerservice service;
     @Autowired
-    private Registerservice userservice;
+    private Registerservice registerservice;
     @Autowired
     private Followerrepository followersrepo;
-    @PostMapping("/{advertiserid}/follow")
+    @Autowired
+    private Registerrepository Registerrepo;
+
+    @PostMapping("/{userid}/{advertiserid}/follow")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid) throws Exception {
-        Optional<Register> registermodel = userservice.fetchId(advertiserid);
+    public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> registermodel = registerservice.fetchId(userid);
         if (registermodel.isPresent()) {
-            service.savefollower(follow);
-        } else {
-            throw new IllegalArgumentException("Advertisement not found with id: " +advertiserid);
+            Register register = registermodel.get();
+            if(register.getFollowing().contains(advertiserid)){
+                System.out.println("advertiserid exist in the register");
+                register.getFollowing().remove(advertiserid);
+                Registerrepo.save(register);
+            }
+            else{
+                System.out.println("advertiserid not  exist saving the register");
+                register.getFollowing().add(advertiserid);
+                Registerrepo.save(register);
+            }
         }
+        System.out.println("advertisment id not exits"+userid);
         return follow;
     }
-    @GetMapping("/followerslist")
+    @GetMapping("{userid}/followerslist")
     @CrossOrigin(origins = "http://localhost:4200")
-    public List<Followers> getfollowers(){
-        return followersrepo.findAll();
+    public List<Register> getfollowers(@PathVariable("userid") Long userid){
+        System.out.println("follower"+Registerrepo.findById(userid));
+        return Registerrepo.findById(userid);
     }
 
 }

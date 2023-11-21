@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -30,7 +32,22 @@ public class Register {
     @ManyToOne
     @JoinColumn(name = "advertise_id")
     private Advertise advertise;
-
+    @ElementCollection
+    private List<Long> following = new ArrayList<>();
+    private String brandname;
+    private String bio;
+    private Number no_followers;
+    private Number no_ads;
+    private Number mobilenumber;
+    private String country;
+    private Number countrycode;
+    private String address;
+    private String website;
+    private String youtube;
+    private String facebook;
+    private String instagram;
+    private String twitter;
+    private String pinterest;
 
 
     public static void main(String[] args) {

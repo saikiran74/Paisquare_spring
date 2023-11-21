@@ -19,6 +19,8 @@ public class Contactus {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    private String userid;
+    private String username;
     private String email;
     private String mobilenumber;
     private String issue;
