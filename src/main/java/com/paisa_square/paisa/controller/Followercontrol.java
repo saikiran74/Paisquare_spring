@@ -8,6 +8,7 @@ import com.paisa_square.paisa.serice.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 @RestController
@@ -45,7 +46,7 @@ public class Followercontrol {
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Register> getfollowers(@PathVariable("userid") Long userid){
         System.out.println("follower"+Registerrepo.findById(userid));
-        return Registerrepo.findById(userid);
+        return Collections.singletonList(Registerrepo.findById(userid).orElse(null));
     }
 
 }
