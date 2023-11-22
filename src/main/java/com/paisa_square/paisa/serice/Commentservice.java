@@ -2,12 +2,12 @@ package com.paisa_square.paisa.serice;
 
 import com.paisa_square.paisa.model.Advertise;
 import com.paisa_square.paisa.model.Comments;
-import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Commentrepository;
-import com.paisa_square.paisa.repository.Contactusrepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Optional;
 
 @Service
 public class Commentservice {
@@ -15,7 +15,7 @@ public class Commentservice {
     private Commentrepository commentrepo;
     @Autowired
     private Advertiserepository adrepo;
-    public Advertise fetchId(Integer id){
+    public Optional<Advertise> fetchId(Long id){
         return adrepo.findById(id);
     }
     public Comments savecomment(Comments comment) {

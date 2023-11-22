@@ -10,6 +10,7 @@ import com.paisa_square.paisa.serice.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,18 @@ public class Advertisecontrol {
     public List<Advertise> getAllAdvertisements() {
         System.out.println(service.findAlladvertisement());
         return service.findAlladvertisement();
+    }
+    @GetMapping("/{advertisementid}/idadvertisements")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Long advertisementid) {
+        System.out.println(adrepo.findById(advertisementid));
+        return Collections.singletonList(adrepo.findById(advertisementid).orElse(null));
+    }
+    @GetMapping("/{userid}/useradvertisements")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
+        System.out.println(service.findAlladvertisement());
+        return service.findAllByadvertiserId(userid);
     }
 
     @PostMapping("/{userid}/advertise")

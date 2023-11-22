@@ -1,9 +1,11 @@
 package com.paisa_square.paisa.repository;
 
 import com.paisa_square.paisa.model.Advertise;
+import com.paisa_square.paisa.model.Comments;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface Advertiserepository extends JpaRepository<Advertise,Long> {
+import java.util.List;
 
-    Advertise findById(Integer id);
+public interface Advertiserepository extends JpaRepository<Advertise,Long> {
+    List<Advertise> findByadvertiserId(Integer userid);
 }

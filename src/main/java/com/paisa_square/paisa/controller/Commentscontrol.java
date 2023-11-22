@@ -21,8 +21,8 @@ public class Commentscontrol {
     private Commentrepository commentrepo;
     @PostMapping("{userid}/{advertisementid}/comments")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Integer advertisementid) throws Exception {
-        Optional<Advertise> advertisemodel = Optional.ofNullable(service.fetchId(advertisementid));
+    public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception {
+        Optional<Advertise> advertisemodel = service.fetchId(advertisementid);
         if (advertisemodel.isPresent()) {
             Advertise advertisement = advertisemodel.get();
             advertisement.getCommenteduser().add(userid);
