@@ -42,7 +42,7 @@ public class Followercontrol {
         System.out.println("advertisment id not exits"+userid);
         return follow;
     }
-    @GetMapping("{userid}/followerslist")
+    @GetMapping("{userid}/userdata")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Register> getfollowers(@PathVariable("userid") Long userid){
         System.out.println("follower"+Registerrepo.findById(userid));

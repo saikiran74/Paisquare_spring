@@ -1,5 +1,6 @@
 package com.paisa_square.paisa.controller;
 
+import com.paisa_square.paisa.model.Followers;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.serice.Registerservice;
 import com.paisa_square.paisa.model.Register;
@@ -11,7 +12,7 @@ import java.util.Optional;
 @RestController
 public class Registationcontrol {
     @Autowired
-    private Registerservice service;
+    private Registerservice registerservice;
     @Autowired
     private Registerrepository registerRepo;
     @PostMapping("/registeruser")
@@ -19,14 +20,54 @@ public class Registationcontrol {
     public Register registerUser(@RequestBody Register user) throws Exception {
         String tempEmailId = user.getEmail();
         if(tempEmailId!=null && !"".equals(tempEmailId)){
-            Register userobj=service.fetchUserByEmailId(tempEmailId);
+            Register userobj=registerservice.fetchUserByEmailId(tempEmailId);
             if(userobj!=null){
                 throw new Exception("emailid is exist");
             }
         }
         Register userobj=null;
-        userobj=service.saveUser(user);
+        userobj=registerservice.saveUser(user);
         return userobj;
+    }
+    @PostMapping("/{userid}/{advertiserid}/blockadvertiser")
+    @CrossOrigin(origins = "http://localhost:4200/")
+    public Register block(@RequestBody Register registerobj, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> registermodel = registerservice.fetchId(userid);
+        if (registermodel.isPresent()) {
+            Register register = registermodel.get();
+            if(register.getBlocked().contains(advertiserid)){
+                System.out.println("advertiserid exist in the register  blocked removing.");
+                register.getBlocked().remove(advertiserid);
+                registerRepo.save(register);
+            }
+            else{
+                System.out.println("advertiserid not  exist saving the register blocked adding");
+                register.getBlocked().add(advertiserid);
+                registerRepo.save(register);
+            }
+        }
+        System.out.println("blockadvertiser->advertisment id not exits"+userid);
+        return registerobj;
+    }
+    @PostMapping("/{userid}/{advertisementid}/addAdvetisementToFavourite")
+    @CrossOrigin(origins = "http://localhost:4200/")
+    public Register saveadvertisement(@RequestBody Register registerobj, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> registermodel = registerservice.fetchId(userid);
+        if (registermodel.isPresent()) {
+            Register register = registermodel.get();
+            if(register.getFavourites().contains(advertisementid)){
+                System.out.println("advertisementid exist in the register saved removing..");
+                register.getFavourites().remove(advertisementid);
+                registerRepo.save(register);
+            }
+            else{
+                System.out.println("advertiserid not  exist saving the register saved adding..");
+                register.getFavourites().add(advertisementid);
+                registerRepo.save(register);
+            }
+        }
+        System.out.println("addAdvetisementToFavourite->advertisment id not exits"+userid);
+        return registerobj;
     }
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200/")
@@ -36,7 +77,7 @@ public class Registationcontrol {
         System.out.println("sai");
         Register userObj=null;
         if(tempEmailId!=null && tempPass!=null){
-            userObj=service.fetchUserByEmailIdAndPassword(tempEmailId,tempPass);
+            userObj=registerservice.fetchUserByEmailIdAndPassword(tempEmailId,tempPass);
         }
         if(userObj==null){
             throw new Exception("Bad email and password"+tempEmailId+tempPass);
