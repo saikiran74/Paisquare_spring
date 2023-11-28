@@ -1,6 +1,7 @@
 package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.*;
+import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Followerrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.serice.Followerservice;
@@ -21,13 +22,19 @@ public class Followercontrol {
     private Followerrepository followersrepo;
     @Autowired
     private Registerrepository Registerrepo;
+    @Autowired
+    private Advertiserepository adrepo;
 
     @PostMapping("/{userid}/{advertiserid}/follow")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerservice.fetchId(userid);
+        Optional<Register> advertisermodel = registerservice.fetchId(advertiserid);
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
+            Register advertiser = advertisermodel.get();
+            follow.setAdvertiser(advertiser);
+            follow.setUser(register);
             if(register.getFollowing().contains(advertiserid)){
                 System.out.println("advertiserid exist in the register");
                 register.getFollowing().remove(advertiserid);
@@ -40,6 +47,7 @@ public class Followercontrol {
             }
         }
         System.out.println("advertisment id not exits"+userid);
+        followersrepo.save(follow);
         return follow;
     }
     @GetMapping("{userid}/userdata")
@@ -47,6 +55,13 @@ public class Followercontrol {
     public List<Register> getfollowers(@PathVariable("userid") Long userid){
         System.out.println("follower"+Registerrepo.findById(userid));
         return Collections.singletonList(Registerrepo.findById(userid).orElse(null));
+    }
+
+    @GetMapping("{userid}/followersgraph")
+    @CrossOrigin(origins = "http://localhost:4200/")
+    public List<Object[]> followersgraph(@PathVariable("userid") Long userid) throws Exception {
+        System.out.println(followersrepo.followersgraph(userid));
+        return followersrepo.followersgraph(userid);
     }
 
 }

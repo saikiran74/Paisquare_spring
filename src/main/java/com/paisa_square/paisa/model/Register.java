@@ -29,9 +29,6 @@ public class Register {
     private Date opendate;
     @UpdateTimestamp
     private Date lastupdate;
-    @ManyToOne
-    @JoinColumn(name = "advertise_id")
-    private Advertise advertise;
     @ElementCollection
     private List<Long> following = new ArrayList<>();
     @ElementCollection

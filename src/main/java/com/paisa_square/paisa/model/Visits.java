@@ -1,9 +1,6 @@
 package com.paisa_square.paisa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,7 +17,12 @@ public class Visits {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String advertisementid;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn()
+    private Advertise advertisement;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn()
+    private Register advertiser;
     private String userid;
     private boolean visited;
     @CreationTimestamp

@@ -1,9 +1,6 @@
 package com.paisa_square.paisa.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,8 +17,12 @@ public class Followers {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String advertiserid;
-    private String userid;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn()
+    private Register advertiser;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn()
+    private Register user;
     private boolean following;
     @CreationTimestamp
     private Date opendate;

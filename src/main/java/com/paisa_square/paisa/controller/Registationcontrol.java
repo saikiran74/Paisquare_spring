@@ -49,26 +49,6 @@ public class Registationcontrol {
         System.out.println("blockadvertiser->advertisment id not exits"+userid);
         return registerobj;
     }
-    @PostMapping("/{userid}/{advertisementid}/addAdvetisementToFavourite")
-    @CrossOrigin(origins = "http://localhost:4200/")
-    public Register saveadvertisement(@RequestBody Register registerobj, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
-        if (registermodel.isPresent()) {
-            Register register = registermodel.get();
-            if(register.getFavourites().contains(advertisementid)){
-                System.out.println("advertisementid exist in the register saved removing..");
-                register.getFavourites().remove(advertisementid);
-                registerRepo.save(register);
-            }
-            else{
-                System.out.println("advertiserid not  exist saving the register saved adding..");
-                register.getFavourites().add(advertisementid);
-                registerRepo.save(register);
-            }
-        }
-        System.out.println("addAdvetisementToFavourite->advertisment id not exits"+userid);
-        return registerobj;
-    }
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Register loginUser(@RequestBody Register login) throws Exception {
