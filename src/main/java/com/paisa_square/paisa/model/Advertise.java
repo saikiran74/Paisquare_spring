@@ -34,6 +34,8 @@ public class Advertise {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn()
     private Register advertiser;
+    @ElementCollection
+    private List<Long> favourites = new ArrayList<>();
 
     @ElementCollection
     private List<Long> visiteduser = new ArrayList<>();

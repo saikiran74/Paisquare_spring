@@ -26,19 +26,16 @@ public class Advertisecontrol {
     @GetMapping("/advertisements")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getAllAdvertisements() {
-        System.out.println(service.findAlladvertisement());
         return service.findAlladvertisement();
     }
     @GetMapping("/{advertisementid}/idadvertisements")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Long advertisementid) {
-        System.out.println(adrepo.findById(advertisementid));
         return Collections.singletonList(adrepo.findById(advertisementid).orElse(null));
     }
     @GetMapping("/{userid}/useradvertisements")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
-        System.out.println(service.findAlladvertisement());
         return service.findAllByadvertiserId(userid);
     }
 
@@ -49,8 +46,6 @@ public class Advertisecontrol {
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
             ad.setAdvertiser(register);
-            System.out.println(register);
-            System.out.println(ad);
             service.savead(ad);
             if (ad == null) {
                 throw new Exception("Bad adveritise details");
@@ -64,8 +59,6 @@ public class Advertisecontrol {
     @GetMapping("/{advertisementid}/commentslist")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Comments> getAllCommentList(@PathVariable("advertisementid") Integer advertisementid) {
-        System.out.println("-=-=-=-=-=-====-==-=-=");
-        System.out.println(service.findByadvertisementid(advertisementid));
         return service.findByadvertisementid(advertisementid);
     }
 

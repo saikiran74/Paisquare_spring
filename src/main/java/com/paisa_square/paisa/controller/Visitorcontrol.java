@@ -63,5 +63,10 @@ public class Visitorcontrol {
         System.out.println(visitorrepo.visitorsgraph(userid));
         return visitorrepo.visitorsgraph(userid);
     }
-
+    @GetMapping("/{userid}/getvisitedadvertisementslist")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public List<Advertise> getvisitedadvertisementslist(@PathVariable("userid") Integer userid) {
+        System.out.println(adrepo.findAllBylikes(userid));
+        return adrepo.findAllByvisiteduser(userid);
+    }
 }

@@ -33,8 +33,6 @@ public class Register {
     private List<Long> following = new ArrayList<>();
     @ElementCollection
     private List<Long> blocked = new ArrayList<>();
-    @ElementCollection
-    private List<Long> Favourites = new ArrayList<>();
     private String brandname;
     private String bio;
     private Number no_followers;

@@ -7,6 +7,8 @@ import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -99,4 +101,11 @@ public class Registationcontrol {
         System.out.println("user profile obj after update"+userprofileobj);
         return userprofileobj;
     }
+    @GetMapping("{userid}/userdata")
+    @CrossOrigin(origins = "http://localhost:4200")
+    public List<Register> getfollowers(@PathVariable("userid") Long userid){
+        System.out.println("follower"+registerRepo.findById(userid));
+        return Collections.singletonList(registerRepo.findById(userid).orElse(null));
+    }
+
 }
