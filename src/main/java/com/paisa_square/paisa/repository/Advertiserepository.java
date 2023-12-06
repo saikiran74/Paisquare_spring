@@ -24,4 +24,9 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
 
     @Query(value = "SELECT * FROM Register r WHERE r.following = :userId", nativeQuery = true)
     List<Advertise> findAllByFollowerId(@Param("userId") Long userId);
+
+    @Query("SELECT a FROM Advertise a " +
+            "INNER JOIN Followers f ON a.advertiser = f.advertiser " +
+            "WHERE f.user.id = :userId AND f.following = true")
+    List<Advertise> findAdvertiseByUserFollowing(@Param("userId") Long userId);
 }

@@ -70,10 +70,10 @@ public class Followercontrol {
     }
     @GetMapping("/{userid}/getfollowingadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")
-    public List<Followers> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
+    public List<Advertise> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
         Optional<Register> registermodel = registerservice.fetchId(userid);
         if (registermodel.isPresent()) {
-            return followersrepo.findByUserId(userid);
+            return adrepo.findAdvertiseByUserFollowing(userid);
         } else {
             return Collections.emptyList();
         }
