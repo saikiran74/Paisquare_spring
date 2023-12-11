@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -66,11 +67,19 @@ public class Likecontrol {
         }
         return likeobj;
     }
-    @GetMapping("{userid}/likesgraph")
+    @GetMapping("{userid}/{period}/likesgraph")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public List<Object[]> likegraph(@PathVariable("userid") Long userid) throws Exception {
-        System.out.println(likerepo.likegraph(userid));
-        return likerepo.likegraph(userid);
+    public List<Object[]> likegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        if(Objects.equals(period, "weekly")){
+            return likerepo.weeklygraph(userid);
+        } else if (Objects.equals(period, "lastmonth")) {
+            return likerepo.lastmonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return likerepo.thismonth(userid);
+        }
+        else{
+            return likerepo.yearlygraph(userid);
+        }
     }
     @GetMapping("/{userid}/getlikedadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")

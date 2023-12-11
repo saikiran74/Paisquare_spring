@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 @RestController
 public class Visitorcontrol {
@@ -57,11 +58,18 @@ public class Visitorcontrol {
         return savevisitobj;
     }
 
-    @GetMapping("{userid}/visitorgraph")
+    @GetMapping("{userid}/{period}/visitorgraph")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public List<Object[]> visitorgraph(@PathVariable("userid") Long userid) throws Exception {
-        System.out.println(visitorrepo.visitorsgraph(userid));
-        return visitorrepo.visitorsgraph(userid);
+    public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        if(Objects.equals(period, "weekly")){
+            return visitorrepo.weeklygraph(userid);
+        } else if (Objects.equals(period, "lastmonth")) {
+            return visitorrepo.lastmonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return visitorrepo.thismonth(userid);
+        } else{
+            return visitorrepo.yearlygraph(userid);
+        }
     }
     @GetMapping("/{userid}/getvisitedadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")

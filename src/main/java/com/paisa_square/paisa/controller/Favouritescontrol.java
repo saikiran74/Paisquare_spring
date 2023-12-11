@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -71,11 +72,19 @@ public class Favouritescontrol {
         return favourite;
     }
 
-    @GetMapping("{userid}/favouritegraph")
+    @GetMapping("{userid}/{period}/favouritegraph")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public List<Object[]> favouritegraph(@PathVariable("userid") Long userid) throws Exception {
-        System.out.println(favouritesRepo.favouritesgraph(userid));
-        return favouritesRepo.favouritesgraph(userid);
+    public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        if(Objects.equals(period, "weekly")){
+            return favouritesRepo.weeklygraph(userid);
+        } else if (Objects.equals(period, "lastmonth")) {
+            return favouritesRepo.lastmonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return favouritesRepo.thismonth(userid);
+        }
+        else{
+            return favouritesRepo.yearlygraph(userid);
+        }
     }
     @GetMapping("/{userid}/getfavouriteadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")

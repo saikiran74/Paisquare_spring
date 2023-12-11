@@ -9,10 +9,8 @@ import com.paisa_square.paisa.serice.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+
 @RestController
 public class Followercontrol {
     @Autowired
@@ -63,10 +61,19 @@ public class Followercontrol {
             followersrepo.save(follow);
         return follow;
     }
-    @GetMapping("{userid}/followersgraph")
+    @GetMapping("{userid}/{period}/followersgraph")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public List<Object[]> followersgraph(@PathVariable("userid") Long userid) throws Exception {
-        return followersrepo.followersgraph(userid);
+    public List<Object[]> followersgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        if(Objects.equals(period, "weekly")){
+            return followersrepo.weeklygraph(userid);
+        } else if (Objects.equals(period, "lastmonth")) {
+            return followersrepo.lastmonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return followersrepo.thismonth(userid);
+        }
+        else{
+            return followersrepo.yearlygraph(userid);
+        }
     }
     @GetMapping("/{userid}/getfollowingadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")
