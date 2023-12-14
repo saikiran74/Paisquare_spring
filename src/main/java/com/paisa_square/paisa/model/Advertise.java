@@ -6,6 +6,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,21 +23,27 @@ public class Advertise {
     private String brandname;
     private String description;
     private String url;
-    private Integer pai;
-    private Integer paiperclick;
-    private Integer paisa;
-    private Integer paisaperclick;
+    private BigDecimal pai;
+    private BigDecimal paiperclick;
+    private BigDecimal availablepai;
+    private BigDecimal paisa;
+    private BigDecimal paisaperclick;
+    private BigDecimal availablepaisa;
     private String country;
     private String state;
     private String district;
-    private Number likescount;
-    private Number commentscount;
+    private String hashtags;
+    private Integer likescount=0;
+    private Integer commentscount=0;
+    private Integer visitscount=0;
+    @Getter
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn()
     private Register advertiser;
     @ElementCollection
     private List<Long> favourites = new ArrayList<>();
 
+    @Getter
     @ElementCollection
     private List<Long> visiteduser = new ArrayList<>();
     @ElementCollection
@@ -44,25 +51,18 @@ public class Advertise {
     @ElementCollection
     private List<Long> likes = new ArrayList<>();
 
-    public List<Long> getVisiteduser() {
-        return visiteduser;
-    }
-
-    public void setVisiteduser(List<Long> visiteduser) {
-        this.visiteduser = visiteduser;
-    }
-
 
     @CreationTimestamp
     private Date opendate;
     @UpdateTimestamp
     private Date lastupdate;
 
-    public Register getAdvertiser() {
-        return advertiser;
-    }
-
     public void setAdvertiser(Register advertiser) {
         this.advertiser = advertiser;
     }
+
+    public void setVisiteduser(List<Long> visiteduser) {
+        this.visiteduser = visiteduser;
+    }
+
 }

@@ -13,13 +13,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 @RestController
 public class Visitorcontrol {
     @Autowired
-    private VisitorService service;
+    private VisitorService visitorService;
     @Autowired
     private VisitorRepository visitorrepo;
     @Autowired
@@ -36,23 +37,32 @@ public class Visitorcontrol {
             Advertise advertise = advertismentmodel.get();
             Optional<Register> registermodel = registerservice.fetchId(advertise.getAdvertiser().getId());
             Register register = registermodel.get();
+            //Saving data into visitor table
             visit.setAdvertisement(advertise);
             visit.setAdvertiser(register);
+            //Saving data into advertise table visited count increment
+            advertise.setVisitscount(advertise.getVisitscount()+1);
+            // Saving data into advertise_visiteduser table
+
             if(advertise.getVisiteduser().contains(userid)){
                 System.out.println("user exist in the visiteduser");
             }
             else{
+                if(advertise.getPaiperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepai().subtract(advertise.getPaiperclick())).compareTo(BigDecimal.ZERO)>=0){
+                    advertise.setAvailablepai(advertise.getAvailablepai().subtract(advertise.getPaiperclick()));
+                }
+                if(advertise.getPaisaperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick())).compareTo(BigDecimal.ZERO)>=0){
+                    advertise.setAvailablepaisa(advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick()));
+                }
                 System.out.println("user not  exist saving the visiteduser");
                 advertise.getVisiteduser().add(userid);
                 adrepo.save(advertise);
             }
             System.out.println("user not  exist saving the visit table"+advertisementid);
-            savevisitobj = service.savevisitor(visit);
-            System.out.println(savevisitobj);
+            savevisitobj = visitorService.savevisitor(visit);
             if (visit == null) {
                 throw new Exception("Bad contactus details");
             }
-
         }
         System.out.println("advertisment id not exits"+advertisementid);
         return savevisitobj;
@@ -74,7 +84,6 @@ public class Visitorcontrol {
     @GetMapping("/{userid}/getvisitedadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getvisitedadvertisementslist(@PathVariable("userid") Integer userid) {
-        System.out.println(adrepo.findAllBylikes(userid));
         return adrepo.findAllByvisiteduser(userid);
     }
 }

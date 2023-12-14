@@ -56,7 +56,6 @@ public class Registationcontrol {
     public Register loginUser(@RequestBody Register login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPass=login.getPassword();
-        System.out.println("sai");
         Register userObj=null;
         if(tempEmailId!=null && tempPass!=null){
             userObj=registerservice.fetchUserByEmailIdAndPassword(tempEmailId,tempPass);
@@ -70,7 +69,6 @@ public class Registationcontrol {
     @GetMapping("/{userid}/profile")
     @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
-        System.out.println("profile obj==++>>"+registerRepo.findById(userid));
         return registerRepo.findById(userid);
     }
     @PostMapping("{userid}/updateProfile")
@@ -78,7 +76,6 @@ public class Registationcontrol {
     public Register visit(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> userProfile = registerRepo.findById(userid);
         Register userprofileobj = null;
-        System.out.println("profile from angular cd"+profile);
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
             userprofileobj.setBrandname(profile.getBrandname());
@@ -98,13 +95,11 @@ public class Registationcontrol {
             userprofileobj.setBio(profile.getBio());
             registerRepo.save(userprofileobj);
         }
-        System.out.println("user profile obj after update"+userprofileobj);
         return userprofileobj;
     }
     @GetMapping("{userid}/userdata")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Register> getfollowers(@PathVariable("userid") Long userid){
-        System.out.println("follower"+registerRepo.findById(userid));
         return Collections.singletonList(registerRepo.findById(userid).orElse(null));
     }
 

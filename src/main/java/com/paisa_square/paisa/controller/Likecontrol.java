@@ -35,14 +35,19 @@ public class Likecontrol {
             like.setAdvertisement(advertise);
             like.setUser(register);
             like.setAdvertiser(advertise.getAdvertiser());
+            //Updating advertise_likes
             if(advertise.getLikes().contains(userid)) {
                 System.out.println("Already user like this"+advertisementid);
                 advertise.getLikes().remove(userid);
+                //updating advertise like count
+                advertise.setLikescount(advertise.getLikescount()-1);
                 adrepo.save(advertise);
             }
             else{
                 System.out.println("user not liked this"+advertisementid);
                 advertise.getLikes().add(userid);
+                //updating advertise like count
+                advertise.setLikescount(advertise.getLikescount()+1);
                 adrepo.save(advertise);
             }
             Advertise advertise2=advertismentmodel.get();
@@ -84,7 +89,6 @@ public class Likecontrol {
     @GetMapping("/{userid}/getlikedadvertisementslist")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getlikedadvertisementslist(@PathVariable("userid") Integer userid) {
-        System.out.println(adrepo.findAllBylikes(userid));
         return adrepo.findAllBylikes(userid);
     }
 }

@@ -17,7 +17,6 @@ public class Contactuscontrol {
     public Contactus contact(@RequestBody Contactus issue) throws Exception {
         Contactus saveissueobj=null;
         saveissueobj=service.saveissue(issue);
-        System.out.println(saveissueobj);
         if(issue==null){
             throw new Exception("Bad contactus details");
         }

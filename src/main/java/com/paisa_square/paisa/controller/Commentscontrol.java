@@ -16,19 +16,21 @@ public class Commentscontrol {
     @Autowired
     private Advertiserepository adrepo;
     @Autowired
-    private Commentservice service;
+    private Commentservice commentservice;
     @Autowired
     private Commentrepository commentrepo;
     @PostMapping("{userid}/{advertisementid}/comments")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception {
-        Optional<Advertise> advertisemodel = service.fetchId(advertisementid);
+        Optional<Advertise> advertisemodel = commentservice.fetchId(advertisementid);
         if (advertisemodel.isPresent()) {
             Advertise advertisement = advertisemodel.get();
             advertisement.getCommenteduser().add(userid);
+            //Updating comments count in advertise table
+            advertisement.setCommentscount(advertisement.getCommentscount()+1);
             adrepo.save(advertisement);
             comment.setAdvertise(advertisement);
-            service.savecomment(comment);
+            commentservice.savecomment(comment);
         } else {
             throw new IllegalArgumentException("Advertisement not found with id: " + 1);
         }

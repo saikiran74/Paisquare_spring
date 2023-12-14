@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -25,6 +26,8 @@ public class Register {
     private String lastname;
     private String email;
     private String password;
+    private BigDecimal pai;
+    private BigDecimal paisa;
     @CreationTimestamp
     private Date opendate;
     @UpdateTimestamp
@@ -35,11 +38,11 @@ public class Register {
     private List<Long> blocked = new ArrayList<>();
     private String brandname;
     private String bio;
-    private Number no_followers;
-    private Number no_ads;
-    private Number mobilenumber;
+    private Integer no_followers;
+    private Integer no_ads;
+    private Integer mobilenumber;
     private String country;
-    private Number countrycode;
+    private Integer countrycode;
     private String address;
     private String website;
     private String youtube;
