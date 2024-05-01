@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200/")
 public class Registationcontrol {
     @Autowired
     private Registerservice registerservice;
@@ -31,26 +32,7 @@ public class Registationcontrol {
         userobj=registerservice.saveUser(user);
         return userobj;
     }
-    @PostMapping("/{userid}/{advertiserid}/blockadvertiser")
-    @CrossOrigin(origins = "http://localhost:4200/")
-    public Register block(@RequestBody Register registerobj, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
-        if (registermodel.isPresent()) {
-            Register register = registermodel.get();
-            if(register.getBlocked().contains(advertiserid)){
-                System.out.println("advertiserid exist in the register  blocked removing.");
-                register.getBlocked().remove(advertiserid);
-                registerRepo.save(register);
-            }
-            else{
-                System.out.println("advertiserid not  exist saving the register blocked adding");
-                register.getBlocked().add(advertiserid);
-                registerRepo.save(register);
-            }
-        }
-        System.out.println("blockadvertiser->advertisment id not exits"+userid);
-        return registerobj;
-    }
+
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Register loginUser(@RequestBody Register login) throws Exception {
@@ -71,28 +53,82 @@ public class Registationcontrol {
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
         return registerRepo.findById(userid);
     }
-    @PostMapping("{userid}/updateProfile")
-    @CrossOrigin(origins = "http://localhost:4200/")
-    public Register visit(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+    @PostMapping("{userid}/updateProfile/brandInformation")
+    public Register brandInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> userProfile = registerRepo.findById(userid);
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
-            userprofileobj.setBrandname(profile.getBrandname());
-            userprofileobj.setFirstname(profile.getFirstname());
-            userprofileobj.setLastname(profile.getLastname());
-            userprofileobj.setEmail(profile.getEmail());
-            userprofileobj.setMobilenumber(profile.getMobilenumber());
-            userprofileobj.setCountry(profile.getCountry());
-            userprofileobj.setCountrycode(profile.getCountrycode());
-            userprofileobj.setAddress(profile.getAddress());
+            userprofileobj.setBrandName(profile.getBrandName());
+            userprofileobj.setBrandDescription(profile.getBrandDescription());
+            userprofileobj.setBrandTagLine(profile.getBrandTagLine());
             userprofileobj.setWebsite(profile.getWebsite());
+            registerRepo.save(userprofileobj);
+        }
+        return userprofileobj;
+    }
+
+    @PostMapping("{userid}/updateProfile/personalInformation")
+    public Register personalInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> userProfile = registerRepo.findById(userid);
+        Register userprofileobj = null;
+        if (userProfile.isPresent()) {
+            userprofileobj = userProfile.get();
+            userprofileobj.setAdvertiserName(profile.getAdvertiserName());
+            userprofileobj.setEmail(profile.getEmail());
+            userprofileobj.setMobileNumber(profile.getMobileNumber());
+            userprofileobj.setBrandLocation(profile.getBrandLocation());
+            registerRepo.save(userprofileobj);
+        }
+        return userprofileobj;
+    }
+
+
+    @PostMapping("{userid}/updateProfile/password")
+    public Register password(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> userProfile = registerRepo.findById(userid);
+        Register userprofileobj = null;
+        if (userProfile.isPresent()) {
+            userprofileobj = userProfile.get();
+            userprofileobj.setPassword(profile.getPassword());
+            registerRepo.save(userprofileobj);
+        }
+        return userprofileobj;
+    }
+
+
+    @PostMapping("{userid}/updateProfile/BrandRecommendation")
+    public Register brandRecommendation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> userProfile = registerRepo.findById(userid);
+        Register userprofileobj = null;
+        if (userProfile.isPresent()) {
+            userprofileobj = userProfile.get();
+            userprofileobj.setBrandCategory(profile.getBrandCategory());
+            userprofileobj.setBrandTargetGender(profile.getBrandTargetGender());
+            userprofileobj.setCountry(profile.getCountry());
+            userprofileobj.setCountryCode(profile.getCountryCode());
+            userprofileobj.setBrandEstablishedIn(profile.getBrandEstablishedIn());
+            userprofileobj.setBrandCompanyEmployeeSize(profile.getBrandCompanyEmployeeSize());
+            userprofileobj.setBrandHashTags(profile.getBrandHashTags());
+            userprofileobj.setPinCodes(profile.getPinCodes());
+            userprofileobj.setBrandTargetAges(profile.getBrandTargetAges());
+            registerRepo.save(userprofileobj);
+        }
+        return userprofileobj;
+    }
+
+
+    @PostMapping("{userid}/updateProfile/socialMediaLinks")
+    public Register socialMediaLinks(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> userProfile = registerRepo.findById(userid);
+        Register userprofileobj = null;
+        if (userProfile.isPresent()) {
+            userprofileobj = userProfile.get();
             userprofileobj.setYoutube(profile.getYoutube());
             userprofileobj.setFacebook(profile.getFacebook());
             userprofileobj.setInstagram(profile.getInstagram());
             userprofileobj.setTwitter(profile.getTwitter());
             userprofileobj.setPinterest(profile.getPinterest());
-            userprofileobj.setBio(profile.getBio());
             registerRepo.save(userprofileobj);
         }
         return userprofileobj;
