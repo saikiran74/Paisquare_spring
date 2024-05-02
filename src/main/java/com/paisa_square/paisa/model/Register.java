@@ -38,13 +38,20 @@ public class Register {
     @ElementCollection
     private List<Long> following = new ArrayList<>();
     @ElementCollection
+    private List<Long> followers = new ArrayList<>();
+    @ElementCollection
     private List<Long> blocked = new ArrayList<>();
     private String brandName;
     private String brandDescription;
     private String brandTagLine;
     private String website;
-    private Integer no_followers;
-    private Integer no_ads;
+    private Integer NoOfAdvertisements;
+    private Integer NoOfLikes;
+    private Integer NoOfComments;
+    private Integer NoOfFollowers;
+    private Integer NoOfSavedAds;
+    private Integer NoOfVisit;
+    private Integer NoOfProfileVisits;
     private String youtube;
     private String facebook;
     private String instagram;

@@ -32,20 +32,27 @@ public class Favouritescontrol {
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerservice.fetchId(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
-        if (registermodel.isPresent()) {
+
+        if (registermodel.isPresent() && advertisemodel.isPresent()) {
             Register register = registermodel.get();
             Advertise advertise=advertisemodel.get();
+            Optional<Register> AdvertiserInregisterModel=registerrepo.findById(advertise.getAdvertiser().getId());
+            Register AdvertiserInregister =AdvertiserInregisterModel.get();
             favourite.setUser(register);
             favourite.setAdvertiser(advertise.getAdvertiser());
             favourite.setAdvertisement(advertise);
             if(advertise.getFavourites().contains(userid)){
                 System.out.println("advertisementid exist in the register saved removing..");
                 advertise.getFavourites().remove(userid);
+                AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()-1);
+                registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
             else{
                 System.out.println("advertiserid not  exist saving the register saved adding..");
                 advertise.getFavourites().add(userid);
+                AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()+1);
+                registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
         }
