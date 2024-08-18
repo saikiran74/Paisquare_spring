@@ -36,5 +36,5 @@ public interface Followerrepository extends JpaRepository<Followers,Long> {
 
     Optional<Followers> findByAdvertiserIdAndUserId(Long advertiserId, Long userId);
 
-    List<Followers> findByUserId(Long userid);
+
 }

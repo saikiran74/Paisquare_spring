@@ -8,7 +8,7 @@ public class PaisaApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(PaisaApplication.class, args);
-		System.out.println("Welcome PaiSquare");
+		System.out.println("Welcome to PaiSquare");
 	}
 
 }

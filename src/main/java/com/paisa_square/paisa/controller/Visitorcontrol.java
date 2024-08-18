@@ -5,6 +5,7 @@ import com.paisa_square.paisa.model.Contactus;
 import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.model.Visits;
 import com.paisa_square.paisa.repository.Advertiserepository;
+import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.VisitorRepository;
 import com.paisa_square.paisa.serice.Contactusservice;
 import com.paisa_square.paisa.serice.Registerservice;
@@ -24,6 +25,8 @@ public class Visitorcontrol {
     @Autowired
     private VisitorRepository visitorrepo;
     @Autowired
+    private Registerrepository registerRepo;
+    @Autowired
     private Registerservice registerservice;
     @Autowired
     private Advertiserepository adrepo;
@@ -37,6 +40,9 @@ public class Visitorcontrol {
             Advertise advertise = advertismentmodel.get();
             Optional<Register> registermodel = registerservice.fetchId(advertise.getAdvertiser().getId());
             Register register = registermodel.get();
+            //Saving data into register table
+            register.setNoOfVisit(register.getNoOfVisit()+1);
+            registerRepo.save(register);
             //Saving data into visitor table
             visit.setAdvertisement(advertise);
             visit.setAdvertiser(register);

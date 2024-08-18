@@ -29,4 +29,10 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
             "INNER JOIN Followers f ON a.advertiser = f.advertiser " +
             "WHERE f.user.id = :userId AND f.following = true")
     List<Advertise> findAdvertiseByUserFollowing(@Param("userId") Long userId);
+
+    @Query("SELECT a FROM Advertise a " +
+            "INNER JOIN Blockedadvertiser b ON a.advertiser = b.advertiser " +
+            "WHERE b.user.id = :userId AND b.blocked = true")
+    List<Advertise> findAdvertiseByUserBlocked(@Param("userId") Long userId);
+
 }

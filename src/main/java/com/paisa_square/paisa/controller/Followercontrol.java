@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class Followercontrol {
     @Autowired
     private Followerservice service;
@@ -80,7 +81,16 @@ public class Followercontrol {
     public List<Advertise> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
         Optional<Register> registermodel = registerservice.fetchId(userid);
         if (registermodel.isPresent()) {
-            return adrepo.findAdvertiseByUserFollowing(userid);
+           return adrepo.findAdvertiseByUserFollowing(userid);
+        } else {
+            return Collections.emptyList();
+        }
+    }
+    @GetMapping("/{userid}/UserFollowingProfiles")
+    public List<Register> getUserFollowingProfiles(@PathVariable("userid") Long userid) {
+        List<Register> followersModel=Registerrepo.findAllProfilesUserFollowing(userid);
+        if (!followersModel.isEmpty()) {
+            return Registerrepo.findAllProfilesUserFollowing(userid);
         } else {
             return Collections.emptyList();
         }

@@ -18,7 +18,7 @@ import java.util.Optional;
 @RestController
 public class Likecontrol {
     @Autowired
-    private Registerrepository registorrepo;
+    private Registerrepository registerRepo;
     @Autowired
     private Advertiserepository adrepo;
     @Autowired
@@ -28,10 +28,12 @@ public class Likecontrol {
     public Likes like(@RequestBody Likes like,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception{
         Likes likeobj=null;
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
-        Optional<Register> registermodel = registorrepo.findById(userid);
-        if(advertismentmodel.isPresent()){
+        Optional<Register> registermodel = registerRepo.findById(userid);
+        if(advertismentmodel.isPresent() && registermodel.isPresent()){
             Advertise advertise=advertismentmodel.get();
             Register register =registermodel.get();
+            Optional<Register> AdvertiserInRegisterModel = registerRepo.findById(userid);
+            Register advertiserInRegister =AdvertiserInRegisterModel.get();
             like.setAdvertisement(advertise);
             like.setUser(register);
             like.setAdvertiser(advertise.getAdvertiser());
@@ -41,6 +43,8 @@ public class Likecontrol {
                 advertise.getLikes().remove(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()-1);
+                advertiserInRegister.setNoOfLikes(advertiserInRegister.getNoOfLikes()-1);
+                registerRepo.save(advertiserInRegister);
                 adrepo.save(advertise);
             }
             else{
@@ -48,6 +52,8 @@ public class Likecontrol {
                 advertise.getLikes().add(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()+1);
+                advertiserInRegister.setNoOfLikes(advertiserInRegister.getNoOfLikes()+1);
+                registerRepo.save(advertiserInRegister);
                 adrepo.save(advertise);
             }
             Advertise advertise2=advertismentmodel.get();

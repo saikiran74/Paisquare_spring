@@ -72,6 +72,7 @@ public class Advertisecontrol {
                     System.out.println("inside the here");
                     register.setPai(register.getPai().subtract(ad.getPai()));
                     register.setPaisa(register.getPaisa().subtract(ad.getPaisa()));
+                    register.setNoOfAdvertisements(register.getNoOfAdvertisements()+1);
                     ad.setAvailablepai(ad.getPai());
                     ad.setAvailablepaisa(ad.getPaisa());
                     registerRepo.save(register);

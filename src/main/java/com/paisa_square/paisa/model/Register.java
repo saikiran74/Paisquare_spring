@@ -22,9 +22,12 @@ public class Register {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String username;
-    private String firstname;
-    private String lastname;
+    private String advertiserName;
     private String email;
+    private String country;
+    private Integer countryCode;
+    private String mobileNumber;
+    private String brandLocation;
     private String password;
     private BigDecimal pai;
     private BigDecimal paisa;
@@ -35,21 +38,32 @@ public class Register {
     @ElementCollection
     private List<Long> following = new ArrayList<>();
     @ElementCollection
+    private List<Long> followers = new ArrayList<>();
+    @ElementCollection
     private List<Long> blocked = new ArrayList<>();
-    private String brandname;
-    private String bio;
-    private Integer no_followers;
-    private Integer no_ads;
-    private Integer mobilenumber;
-    private String country;
-    private Integer countrycode;
-    private String address;
+    private String brandName;
+    private String brandDescription;
+    private String brandTagLine;
     private String website;
+    private Integer NoOfAdvertisements;
+    private Integer NoOfLikes;
+    private Integer NoOfComments;
+    private Integer NoOfFollowers;
+    private Integer NoOfSavedAds;
+    private Integer NoOfVisit;
+    private Integer NoOfProfileVisits;
     private String youtube;
     private String facebook;
     private String instagram;
     private String twitter;
     private String pinterest;
+    private String brandCategory;
+    private String brandTargetGender;
+    private String brandEstablishedIn;
+    private String brandCompanyEmployeeSize;
+    private String[] brandHashTags;
+    private String[] pinCodes;
+    private String brandTargetAges;
 
 
     public static void main(String[] args) {
