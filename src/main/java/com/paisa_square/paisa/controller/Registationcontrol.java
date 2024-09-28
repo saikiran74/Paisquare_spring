@@ -1,15 +1,21 @@
 package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.ApiMessage;
+import com.paisa_square.paisa.model.User;
 import com.paisa_square.paisa.repository.Registerrepository;
+import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.serice.Registerservice;
 import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import java.util.*;
-
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import com.paisa_square.paisa.config.JwtUtil;
+import javax.management.remote.JMXAuthenticator;
 import java.util.Optional;
 
 @RestController
@@ -18,31 +24,37 @@ public class Registationcontrol {
     @Autowired
     private Registerservice registerService;
     @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
     private Registerrepository registerRepo;
+    @Autowired
+    private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @PostMapping("/registeruser")
     @CrossOrigin(origins = "http://localhost:4200")
-    public ResponseEntity<ApiMessage> registerUser(@RequestBody Register user) throws Exception {
+    public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
         System.out.println("in register control");
-        Register createAccount=null;
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
-        System.out.println("hashedPassword "+hashedPassword);
-        System.out.println(tempEmailId);
         if(tempEmailId!=null && !tempEmailId.isEmpty()){
             System.out.println("going to register serve1");
-            Register existingUser=registerService.fetchUserByEmailId(tempEmailId);
+            Register existingUserInRegister=registerService.fetchUserByEmailId(tempEmailId);
+            User existingUser=userRepo.findByEmail(tempEmailId);
             if(existingUser!=null){
                 if(Objects.equals(existingUser.getEmailOTP(), "Verified")){
                     System.out.println("email id is exist");
                     return ResponseEntity.ok(new ApiMessage("error","emailExists", "Email ID already exists"));
                 } else{
                     existingUser.setAccountType(user.getAccountType());
+                    existingUser.setAccountType(user.getAccountType());
                     existingUser.setUsername(user.getUsername());
+                    existingUserInRegister.setUsername(user.getUsername());
                     existingUser.setPincode(user.getPincode());
                     existingUser.setPassword(user.getPassword());
-                    String savingExistingUserStatus=registerService.saveUser(existingUser);
+                    String savingExistingUserStatus= registerService.saveUser(existingUser);
+                    registerService.saveUserInRegister(existingUserInRegister);
                     return statusMessageLogMethod(savingExistingUserStatus);
                 }
             } else{
@@ -64,7 +76,7 @@ public class Registationcontrol {
         }
     }
     @PostMapping("/verifyOTP")
-    public ResponseEntity<?> verifyOtp(@RequestBody Register request) {
+    public ResponseEntity<?> verifyOtp(@RequestBody User request) {
         System.out.println("In verifyOTP page"+request.getEmail()+ request.getEmailOTP());
         boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
         if (isVerified) {
@@ -77,18 +89,19 @@ public class Registationcontrol {
 
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Register login) throws Exception {
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPassword=login.getPassword();
         Map<String, Object> response = new HashMap<>();
         String loginStatus="";
         if(tempEmailId!=null && tempPassword!=null){
             ApiMessage apiMessage;
-            Register user = null;
+            User user = null;
             loginStatus=registerService.fetchUserByEmailIdAndPassword(tempEmailId,tempPassword);
+            System.out.println("loginStatus -->"+ loginStatus);
             if (Objects.equals(loginStatus, "validUser")) {
                 apiMessage = new ApiMessage("success", "validUser", "Login success.");
-                user = registerService.fetchUserByEmailId(tempEmailId);
+                user = userRepo.findByEmail(tempEmailId);
             } else if (Objects.equals(loginStatus, "OTPNotVerified")) {
                 apiMessage = new ApiMessage("error", "OTPNotVerified", "OTP Not verified.");
             } else if (Objects.equals(loginStatus, "inValidCredentials")) {
@@ -98,9 +111,12 @@ public class Registationcontrol {
             } else {
                 apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
             }
-
+            System.out.println("apiMessage -->"+apiMessage);
+            assert user != null;
+            String token = jwtUtil.generateToken(user.getEmail());
             response.put("apiMessage", apiMessage);
             response.put("user", user);
+            response.put("token",token);
 
             return ResponseEntity.ok(response);
         } else{
@@ -148,13 +164,13 @@ public class Registationcontrol {
 
 
     @PostMapping("{userid}/updateProfile/password")
-    public Register password(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> userProfile = registerRepo.findById(userid);
-        Register userprofileobj = null;
+    public User password(@RequestBody User profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<User> userProfile = userRepo.findById(userid);
+        User userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
             userprofileobj.setPassword(profile.getPassword());
-            registerRepo.save(userprofileobj);
+            userRepo.save(userprofileobj);
         }
         return userprofileobj;
     }
