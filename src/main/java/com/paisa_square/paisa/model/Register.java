@@ -31,6 +31,7 @@ public class Register {
     private String password;
     private BigDecimal pai;
     private BigDecimal paisa;
+    private String emailOTP;
     @CreationTimestamp
     private Date opendate;
     @UpdateTimestamp
@@ -61,6 +62,8 @@ public class Register {
     private String brandTargetGender;
     private String brandEstablishedIn;
     private String brandCompanyEmployeeSize;
+    private String pincode;
+    private String accountType;
     private String[] brandHashTags;
     private String[] pinCodes;
     private String brandTargetAges;

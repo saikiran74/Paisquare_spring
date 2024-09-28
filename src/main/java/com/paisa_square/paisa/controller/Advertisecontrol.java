@@ -33,23 +33,19 @@ public class Advertisecontrol {
     @Autowired
     private Advertiserepository adrepo;
     @GetMapping("/advertisements")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getAllAdvertisements() {
         return service.findAlladvertisement();
     }
     @GetMapping("/{advertisementid}/idadvertisements")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Long advertisementid) {
         return Collections.singletonList(adrepo.findById(advertisementid).orElse(null));
     }
     @GetMapping("/{userid}/useradvertisements")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
         return service.findAllByadvertiserId(userid);
     }
 
     @PostMapping("/{userid}/advertise")
-    @CrossOrigin(origins = "http://localhost:4200")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerservice.fetchId(userid);
         Advertise trans=null;
@@ -97,7 +93,6 @@ public class Advertisecontrol {
     }
 
     @GetMapping("/{advertisementid}/commentslist")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Comments> getAllCommentList(@PathVariable("advertisementid") Integer advertisementid) {
         return service.findByadvertisementid(advertisementid);
     }

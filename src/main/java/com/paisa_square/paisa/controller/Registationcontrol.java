@@ -1,51 +1,114 @@
 package com.paisa_square.paisa.controller;
 
-import com.paisa_square.paisa.model.Followers;
+import com.paisa_square.paisa.model.ApiMessage;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.serice.Registerservice;
 import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import java.util.*;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "http://localhost:4200/")
 public class Registationcontrol {
     @Autowired
-    private Registerservice registerservice;
+    private Registerservice registerService;
     @Autowired
     private Registerrepository registerRepo;
+    private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @PostMapping("/registeruser")
-    @CrossOrigin(origins = "http://localhost:4200/")
-    public Register registerUser(@RequestBody Register user) throws Exception {
+    @CrossOrigin(origins = "http://localhost:4200")
+    public ResponseEntity<ApiMessage> registerUser(@RequestBody Register user) throws Exception {
+        System.out.println("in register control");
+        Register createAccount=null;
         String tempEmailId = user.getEmail();
-        if(tempEmailId!=null && !"".equals(tempEmailId)){
-            Register userobj=registerservice.fetchUserByEmailId(tempEmailId);
-            if(userobj!=null){
-                throw new Exception("emailid is exist");
+        String hashedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(hashedPassword);
+        System.out.println("hashedPassword "+hashedPassword);
+        System.out.println(tempEmailId);
+        if(tempEmailId!=null && !tempEmailId.isEmpty()){
+            System.out.println("going to register serve1");
+            Register existingUser=registerService.fetchUserByEmailId(tempEmailId);
+            if(existingUser!=null){
+                if(Objects.equals(existingUser.getEmailOTP(), "Verified")){
+                    System.out.println("email id is exist");
+                    return ResponseEntity.ok(new ApiMessage("error","emailExists", "Email ID already exists"));
+                } else{
+                    existingUser.setAccountType(user.getAccountType());
+                    existingUser.setUsername(user.getUsername());
+                    existingUser.setPincode(user.getPincode());
+                    existingUser.setPassword(user.getPassword());
+                    String savingExistingUserStatus=registerService.saveUser(existingUser);
+                    return statusMessageLogMethod(savingExistingUserStatus);
+                }
+            } else{
+                System.out.println("going to register serve");
+                String statusMessageLog=registerService.saveUser(user);
+                return statusMessageLogMethod(statusMessageLog);
             }
         }
-        Register userobj=null;
-        userobj=registerservice.saveUser(user);
-        return userobj;
+        System.out.println("Issue while creating account!");
+        return ResponseEntity.ok(new ApiMessage("error","issueInCreating", "Issue while creating account"));
+    }
+    public ResponseEntity<ApiMessage> statusMessageLogMethod(String savingUserStatus) {
+        if(Objects.equals(savingUserStatus, "emailSent")){
+            return ResponseEntity.ok(new ApiMessage("success", "OTPSent", "User registered successfully! please enter OTP"));
+        } else if (Objects.equals(savingUserStatus, "invalidEmailAddress")) {
+            return ResponseEntity.ok(new ApiMessage("error", "emailAddressNotFound", "Email address not found!"));
+        } else {
+            return ResponseEntity.ok(new ApiMessage("error", "IssueInSaving", "issue in saving user! please try later"));
+        }
+    }
+    @PostMapping("/verifyOTP")
+    public ResponseEntity<?> verifyOtp(@RequestBody Register request) {
+        System.out.println("In verifyOTP page"+request.getEmail()+ request.getEmailOTP());
+        boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
+        if (isVerified) {
+            //return ResponseEntity.status(400).body(new ApiMessage("success", "OTP verified."));
+            return ResponseEntity.ok(new ApiMessage("success","OTPVerified", "OTP verified."));
+        } else {
+            return ResponseEntity.ok(new ApiMessage("error","invalidOTP", "Invalid OTP."));
+        }
     }
 
     @PostMapping("/login")
     @CrossOrigin(origins = "http://localhost:4200/")
-    public Register loginUser(@RequestBody Register login) throws Exception {
+    public ResponseEntity<Map<String, Object>> loginUser(@RequestBody Register login) throws Exception {
         String tempEmailId=login.getEmail();
-        String tempPass=login.getPassword();
-        Register userObj=null;
-        if(tempEmailId!=null && tempPass!=null){
-            userObj=registerservice.fetchUserByEmailIdAndPassword(tempEmailId,tempPass);
+        String tempPassword=login.getPassword();
+        Map<String, Object> response = new HashMap<>();
+        String loginStatus="";
+        if(tempEmailId!=null && tempPassword!=null){
+            ApiMessage apiMessage;
+            Register user = null;
+            loginStatus=registerService.fetchUserByEmailIdAndPassword(tempEmailId,tempPassword);
+            if (Objects.equals(loginStatus, "validUser")) {
+                apiMessage = new ApiMessage("success", "validUser", "Login success.");
+                user = registerService.fetchUserByEmailId(tempEmailId);
+            } else if (Objects.equals(loginStatus, "OTPNotVerified")) {
+                apiMessage = new ApiMessage("error", "OTPNotVerified", "OTP Not verified.");
+            } else if (Objects.equals(loginStatus, "inValidCredentials")) {
+                apiMessage = new ApiMessage("error", "inValidCredentials", "Please enter valid credentials.");
+            } else if (Objects.equals(loginStatus, "emailIdNotFound")) {
+                apiMessage = new ApiMessage("error", "emailIdNotFound", "Email not found.");
+            } else {
+                apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
+            }
+
+            response.put("apiMessage", apiMessage);
+            response.put("user", user);
+
+            return ResponseEntity.ok(response);
+        } else{
+            ApiMessage apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
+            response.put("apiMessage", apiMessage);
+            response.put("user", null);
+            return ResponseEntity.ok(response);
         }
-        if(userObj==null){
-            throw new Exception("Bad email and password"+tempEmailId+tempPass);
-        }
-        return userObj;
     }
 
     @GetMapping("/{userid}/profile")
