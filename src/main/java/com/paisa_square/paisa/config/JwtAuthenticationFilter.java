@@ -33,16 +33,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        System.out.println("doFilterInternal JWT request -->"+request);
         String token = getJwtFromRequest(request);
         if (token == null || token.trim().isEmpty() || "undefined".equals(token)) {
             System.out.println("Token is undefined or missing. User needs to log in.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
-            System.out.println("token--> " + token);
-
         }
-        if (token != null && !token.trim().isEmpty() || !"undefined".equals(token)) {
+        else {
             try {
                 // Validate token
                 if (jwtUtil.validateToken(token, jwtUtil.extractEmail(token))) {
@@ -59,10 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (Exception e) {
                 logger.error("An error occurred during JWT validation");
             }
-        } else {
-            logger.warn("JWT token is missing or invalid");
         }
-
         chain.doFilter(request, response);
     }
 

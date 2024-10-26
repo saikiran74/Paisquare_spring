@@ -12,6 +12,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +25,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
@@ -78,10 +82,18 @@ public class SecurityConfig {
         return username -> {
             User user = userRepository.findByEmail(username);
             if (user != null) {
+                // Convert roles to authorities (Spring Security requires this format)
+                List<GrantedAuthority> authorities = user.getRoles().stream()
+                        .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
+                        .collect(Collectors.toList());
                 return org.springframework.security.core.userdetails.User.builder()
                         .username(user.getEmail())
                         .password(user.getPassword())
-                        .authorities("USER") // Add roles/authorities as needed
+                        .authorities(authorities) // Set authorities based on roles
+                        .accountLocked(!user.isAccountNonLocked())  // Map the account non-locked status
+                        .accountExpired(!user.isAccountNonExpired()) // Map the account non-expired status
+                        .credentialsExpired(!user.isCredentialsNonExpired()) // Map credentials non-expired status
+                        .disabled(!user.isEnabled()) // Map enabled status
                         .build();
             } else {
                 throw new UsernameNotFoundException("User not found");

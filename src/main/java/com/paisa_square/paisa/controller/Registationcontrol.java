@@ -2,7 +2,9 @@ package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.ApiMessage;
 import com.paisa_square.paisa.model.User;
+import com.paisa_square.paisa.model.Role;
 import com.paisa_square.paisa.repository.Registerrepository;
+import com.paisa_square.paisa.repository.RoleRepository;
 import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.serice.Registerservice;
 import com.paisa_square.paisa.model.Register;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import java.math.BigDecimal;
 import java.util.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +33,8 @@ public class Registationcontrol {
     @Autowired
     private Registerrepository registerRepo;
     @Autowired
+    private RoleRepository roleRepository;
+    @Autowired
     private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @PostMapping("/registeruser")
@@ -38,29 +44,42 @@ public class Registationcontrol {
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
-        if(tempEmailId!=null && !tempEmailId.isEmpty()){
-            System.out.println("going to register serve1");
-            Register existingUserInRegister=registerService.fetchUserByEmailId(tempEmailId);
-            User existingUser=userRepo.findByEmail(tempEmailId);
-            if(existingUser!=null){
-                if(Objects.equals(existingUser.getEmailOTP(), "Verified")){
+        Set<Role> roles = new HashSet<>();
+        Role role = roleRepository.findByRoleName("ROLE_USER");
+        roles.add(role);
+        user.setRoles(roles);
+        if(tempEmailId!=null && !tempEmailId.isEmpty()) {
+            Register existingUserInRegister = registerService.fetchUserByEmailId(tempEmailId);
+            User existingUser = userRepo.findByEmail(tempEmailId);
+            if (existingUser != null) {
+                if (Objects.equals(existingUser.getEmailOTP(), "Verified")) {
                     System.out.println("email id is exist");
-                    return ResponseEntity.ok(new ApiMessage("error","emailExists", "Email ID already exists"));
-                } else{
-                    existingUser.setAccountType(user.getAccountType());
+                    return ResponseEntity.ok(new ApiMessage("error", "emailExists", "Email ID already exists"));
+                } else {
                     existingUser.setAccountType(user.getAccountType());
                     existingUser.setUsername(user.getUsername());
                     existingUserInRegister.setUsername(user.getUsername());
                     existingUser.setPincode(user.getPincode());
                     existingUser.setPassword(user.getPassword());
-                    String savingExistingUserStatus= registerService.saveUser(existingUser);
+                    String savingExistingUserStatus = registerService.saveUser(existingUser);
                     registerService.saveUserInRegister(existingUserInRegister);
                     return statusMessageLogMethod(savingExistingUserStatus);
                 }
-            } else{
-                System.out.println("going to register serve");
-                String statusMessageLog=registerService.saveUser(user);
-                return statusMessageLogMethod(statusMessageLog);
+            } else {
+                Register registerUser = new Register();
+                String saveUserInUser = registerService.saveUser(user);
+                User saveUser = userRepo.findByEmail(user.getEmail());
+                if(saveUser!=null){
+                    registerUser.setId(saveUser.getId());
+                    registerUser.setUsername(user.getUsername());
+                    registerUser.setEmail(user.getEmail());
+                    registerUser.setPincode(user.getPincode());
+                    registerUser.setAccountType(user.getAccountType());
+                    registerUser.setPai(new BigDecimal(500));
+                    registerUser.setPaisa(new BigDecimal(0));
+                    registerService.saveUserInRegister(registerUser);
+                }
+                return statusMessageLogMethod(saveUserInUser);
             }
         }
         System.out.println("Issue while creating account!");
@@ -112,17 +131,18 @@ public class Registationcontrol {
                 apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
             }
             System.out.println("apiMessage -->"+apiMessage);
-            assert user != null;
-            String token = jwtUtil.generateToken(user.getEmail());
+            if(user!=null){
+                String token = jwtUtil.generateToken(user.getEmail());
+                response.put("token",token);
+            }
             response.put("apiMessage", apiMessage);
             response.put("user", user);
-            response.put("token",token);
-
             return ResponseEntity.ok(response);
         } else{
             ApiMessage apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
             response.put("apiMessage", apiMessage);
             response.put("user", null);
+            response.put("token","");
             return ResponseEntity.ok(response);
         }
     }
