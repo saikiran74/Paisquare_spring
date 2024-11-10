@@ -29,11 +29,11 @@ public class Blockedcontrol {
     private Registerrepository registerRepo;
     @Autowired
     private Advertiserepository adrepo;
-    @PostMapping("/{userid}/{advertiserid}/blockadvertiser")
+    @PostMapping("/blockadvertiser/{userid}/{advertiserid}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Blockedadvertiser block(@RequestBody Blockedadvertiser block, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
-        Optional<Register> advertisermodel = registerservice.fetchId(advertiserid);
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
+        Optional<Register> advertisermodel = registerRepo.findByUserId(advertiserid);
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
@@ -69,7 +69,7 @@ public class Blockedcontrol {
         System.out.println("blockadvertiser->advertisment id not exits"+userid);
         return block;
     }
-    @GetMapping("/{userid}/UserBlockedProfiles")
+    @GetMapping("/UserBlockedProfiles/{userid}")
     public List<Register> getUserBlockedProfiles(@PathVariable("userid") Long userid) {
         List<Register> BlockAdvertiserModel=registerRepo.findAllProfilesUserBlocker(userid);
         if (!BlockAdvertiserModel.isEmpty()) {
@@ -78,10 +78,10 @@ public class Blockedcontrol {
             return Collections.emptyList();
         }
     }
-    @GetMapping("/{userid}/getUserBlockedAdvertisementsList")
+    @GetMapping("/getUserBlockedAdvertisementsList/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserBlockedAdvertisementsList(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
         if (registermodel.isPresent()) {
             return adrepo.findAdvertiseByUserBlocked(userid);
         } else {

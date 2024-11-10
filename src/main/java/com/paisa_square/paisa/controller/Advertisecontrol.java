@@ -36,18 +36,19 @@ public class Advertisecontrol {
     public List<Advertise> getAllAdvertisements() {
         return service.findAlladvertisement();
     }
-    @GetMapping("/{advertisementid}/idadvertisements")
+    @GetMapping("/idadvertisements/{advertisementid}")
     public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Long advertisementid) {
         return Collections.singletonList(adrepo.findById(advertisementid).orElse(null));
     }
-    @GetMapping("/{userid}/useradvertisements")
+    @GetMapping("/useradvertisements/{userid}")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
         return service.findAllByadvertiserId(userid);
     }
 
-    @PostMapping("/{userid}/advertise")
+    @PostMapping("/advertise/{userid}")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
+        System.out.println("Saving add form");
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Advertise trans=null;
         if (registermodel.isPresent()) {
             Register register = registermodel.get();

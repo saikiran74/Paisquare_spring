@@ -9,11 +9,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200/")
 public class Contactuscontrol {
     @Autowired
     private Contactusservice service;
     @PostMapping("/contactus")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Contactus contact(@RequestBody Contactus issue) throws Exception {
         Contactus saveissueobj=null;
         saveissueobj=service.saveissue(issue);
