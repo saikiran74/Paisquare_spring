@@ -1,7 +1,9 @@
 package com.paisa_square.paisa.serice;
 
+import com.paisa_square.paisa.model.User;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.model.Register;
+import com.paisa_square.paisa.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,17 +32,22 @@ public class Registerservice {
     private JavaMailSender mailSender;
     @Value("${paiSquareOfcEmail}")
     private String paiSquareOfcEmail;
-
+    @Autowired
+    private UserRepository userRepo;
     private final Random random = new Random();
-    public String saveUser(Register user) throws MessagingException {
+    public Register saveUserInRegister(Register user ){
+        return registerRepository.save(user);
+    }
+    public String saveUser(User user) throws MessagingException {
         System.out.println("in register service");
         String otp=generateOtp();
         user.setEmailOTP(otp);
         String sendOtpEmailResponse=sendOtpEmail(user.getEmail(),otp,user.getUsername());
         String emailResponse="none";
+        System.out.println("user.getEmail()->"+user.getEmail());
         System.out.println("sendOtpEmailResponse "+sendOtpEmailResponse);
         if(Objects.equals(sendOtpEmailResponse, "emailSent")){
-            registerRepository.save(user);
+            userRepo.save(user);
             emailResponse="emailSent";
         } else if (Objects.equals(sendOtpEmailResponse, "invalidEmailAddress")) {
             emailResponse="invalidEmailAddress";
@@ -88,15 +95,15 @@ public class Registerservice {
     }
     public boolean verifyOtp(String email, String otp) {
         System.out.println("verify otp service");
-        Optional<Register> userOptional = Optional.ofNullable(registerRepository.findByEmail(email));
+        Optional<User> userOptional = Optional.ofNullable(userRepo.findByEmail(email));
         System.out.println(userOptional);
         if (userOptional.isPresent()) {
-            Register user = userOptional.get();
+            User user = userOptional.get();
             System.out.println("user.getEmailOTP() "+user.getEmailOTP());
             System.out.println("otp "+otp);
             if(Objects.equals(user.getEmailOTP(), otp)){
                 user.setEmailOTP("Verified");
-                registerRepository.save(user);
+                userRepo.save(user);
                 accountCreationEmail(user.getEmail(),user.getUsername());
                 System.out.println("valid OTP");
                 return true;
@@ -140,13 +147,13 @@ public class Registerservice {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(password);
         System.out.println(hashedPassword);
-        Optional<Register> checkingEmailIdOptional = Optional.ofNullable(registerRepository.findByEmail(email));
+        Optional<User> checkingEmailIdOptional = Optional.ofNullable(userRepo.findByEmail(email));
 
         if(checkingEmailIdOptional.isPresent()){
             boolean passwordMatching=passwordEncoder.matches(password, checkingEmailIdOptional.get().getPassword());
             System.out.println("passwordMatching  "+passwordMatching);
             if (passwordMatching) {
-                Register user = checkingEmailIdOptional.get();
+                User user = checkingEmailIdOptional.get();
                 if(Objects.equals(user.getEmailOTP(), "Verified")){
                     return "validUser";
                 } else {

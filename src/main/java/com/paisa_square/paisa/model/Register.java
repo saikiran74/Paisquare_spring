@@ -21,17 +21,17 @@ public class Register {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @Column(unique = true)
     private String username;
     private String advertiserName;
     private String email;
-    private String country;
-    private Integer countryCode;
+    private String country="IN";
+    private Integer countryCode=91;
     private String mobileNumber;
     private String brandLocation;
-    private String password;
-    private BigDecimal pai;
-    private BigDecimal paisa;
-    private String emailOTP;
+    private BigDecimal pai= BigDecimal.valueOf(500.00);
+    private BigDecimal paisa= BigDecimal.valueOf(0);
     @CreationTimestamp
     private Date opendate;
     @UpdateTimestamp
@@ -46,13 +46,13 @@ public class Register {
     private String brandDescription;
     private String brandTagLine;
     private String website;
-    private Integer NoOfAdvertisements;
-    private Integer NoOfLikes;
-    private Integer NoOfComments;
-    private Integer NoOfFollowers;
-    private Integer NoOfSavedAds;
-    private Integer NoOfVisit;
-    private Integer NoOfProfileVisits;
+    private Integer NoOfAdvertisements=0;
+    private Integer NoOfLikes=0;
+    private Integer NoOfComments=0;
+    private Integer NoOfFollowers=0;
+    private Integer NoOfSavedAds=0;
+    private Integer NoOfVisit=0;
+    private Integer NoOfProfileVisits=0;
     private String youtube;
     private String facebook;
     private String instagram;

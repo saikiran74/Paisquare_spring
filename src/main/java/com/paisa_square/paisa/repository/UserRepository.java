@@ -1,10 +1,11 @@
 package com.paisa_square.paisa.repository;
 
-import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.model.Report;
+import com.paisa_square.paisa.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-
-public interface Reportrepository  extends JpaRepository<Report,Long> {
+@Repository
+public interface UserRepository  extends JpaRepository<User,Long> {
+    User findByEmail(String tempEmailId);
 }
