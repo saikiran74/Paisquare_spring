@@ -46,6 +46,7 @@ public class Advertisecontrol {
     }
 
     @PostMapping("/advertise/{userid}")
+    @CrossOrigin(origins = "http://localhost:4200/")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
         System.out.println("Saving add form");
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
