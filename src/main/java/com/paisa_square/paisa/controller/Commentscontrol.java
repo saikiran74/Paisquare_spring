@@ -6,7 +6,7 @@ import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Commentrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.serice.Commentservice;
+import com.paisa_square.paisa.service.Commentservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

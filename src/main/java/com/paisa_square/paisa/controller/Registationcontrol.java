@@ -6,7 +6,7 @@ import com.paisa_square.paisa.model.Role;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.RoleRepository;
 import com.paisa_square.paisa.repository.UserRepository;
-import com.paisa_square.paisa.serice.Registerservice;
+import com.paisa_square.paisa.service.Registerservice;
 import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

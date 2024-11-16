@@ -7,8 +7,8 @@ import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.Advertisementtransactionrepository;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.serice.Advertiseservice;
-import com.paisa_square.paisa.serice.Registerservice;
+import com.paisa_square.paisa.service.Advertiseservice;
+import com.paisa_square.paisa.service.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -98,5 +98,8 @@ public class Advertisecontrol {
     public List<Comments> getAllCommentList(@PathVariable("advertisementid") Integer advertisementid) {
         return service.findByadvertisementid(advertisementid);
     }
-
+    @GetMapping("/search")
+    public List<Advertise> searchAds(@RequestParam("query") String query) {
+        return service.searchAds(query);
+    }
 }

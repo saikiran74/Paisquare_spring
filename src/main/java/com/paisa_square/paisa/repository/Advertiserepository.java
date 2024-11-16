@@ -35,4 +35,6 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
             "WHERE b.user.id = :userId AND b.blocked = true")
     List<Advertise> findAdvertiseByUserBlocked(@Param("userId") Long userId);
 
+    List<Advertise> findByBrandnameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String brandname, String description);
+
 }

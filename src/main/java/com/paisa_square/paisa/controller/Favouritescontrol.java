@@ -2,12 +2,11 @@ package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.Advertise;
 import com.paisa_square.paisa.model.Favourites;
-import com.paisa_square.paisa.model.Likes;
 import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Favouritesrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.serice.Registerservice;
+import com.paisa_square.paisa.service.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
