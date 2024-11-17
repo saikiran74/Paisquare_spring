@@ -1,7 +1,7 @@
 package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.Contactus;
-import com.paisa_square.paisa.serice.Contactusservice;
+import com.paisa_square.paisa.service.Contactusservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;

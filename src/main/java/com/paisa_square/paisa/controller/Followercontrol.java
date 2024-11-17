@@ -4,8 +4,8 @@ import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Followerrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.serice.Followerservice;
-import com.paisa_square.paisa.serice.Registerservice;
+import com.paisa_square.paisa.service.Followerservice;
+import com.paisa_square.paisa.service.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

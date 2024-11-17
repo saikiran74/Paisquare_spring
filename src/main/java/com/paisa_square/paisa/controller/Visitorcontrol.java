@@ -1,17 +1,14 @@
 package com.paisa_square.paisa.controller;
 
 import com.paisa_square.paisa.model.Advertise;
-import com.paisa_square.paisa.model.Contactus;
 import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.model.Visits;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.VisitorRepository;
-import com.paisa_square.paisa.serice.Contactusservice;
-import com.paisa_square.paisa.serice.Registerservice;
-import com.paisa_square.paisa.serice.VisitorService;
+import com.paisa_square.paisa.service.Registerservice;
+import com.paisa_square.paisa.service.VisitorService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;

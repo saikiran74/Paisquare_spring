@@ -39,6 +39,7 @@ public class Advertise {
     private String status;
     private String district;
     private String hashtags;
+    private String pincodes;
     private Integer likescount=0;
     private Integer commentscount=0;
     private Integer visitscount=0;
@@ -48,7 +49,6 @@ public class Advertise {
     private Register advertiser;
     @ElementCollection
     private List<Long> favourites = new ArrayList<>();
-
     @Getter
     @ElementCollection
     private List<Long> visiteduser = new ArrayList<>();

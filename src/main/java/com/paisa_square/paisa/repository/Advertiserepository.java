@@ -3,10 +3,11 @@ package com.paisa_square.paisa.repository;
 import com.paisa_square.paisa.model.Advertise;
 import com.paisa_square.paisa.model.Comments;
 import com.paisa_square.paisa.model.Register;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
+import org.springframework.data.domain.PageRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,4 +36,15 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
             "WHERE b.user.id = :userId AND b.blocked = true")
     List<Advertise> findAdvertiseByUserBlocked(@Param("userId") Long userId);
 
+    List<Advertise> findByBrandnameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(String brandname, String description);
+
+
+    @Query("SELECT a.hashtags FROM Advertise a")
+    List<String> findTopHashtags();
+
+    @Query("SELECT a FROM Advertise a WHERE a.hashtags LIKE %:hashtag%")
+    List<Advertise> getHashTagsAdvertisement(@Param("hashtag") String hashtag);
+
+    @Query("SELECT a FROM Advertise a WHERE a.pincodes LIKE %:pincodes%")
+    List<Advertise> getPinCodesAdvertisement(@Param("pincodes") String pincodes);
 }
