@@ -10,12 +10,13 @@ import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.service.Advertiseservice;
 import com.paisa_square.paisa.service.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.valueOf;
 
@@ -34,6 +35,7 @@ public class Advertisecontrol {
     private Advertiserepository adrepo;
     @GetMapping("/advertisements")
     public List<Advertise> getAllAdvertisements() {
+        System.out.println("in advertisements");
         return service.findAlladvertisement();
     }
     @GetMapping("/idadvertisements/{advertisementid}")
@@ -48,7 +50,7 @@ public class Advertisecontrol {
     @PostMapping("/advertise/{userid}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
-        System.out.println("Saving add form");
+        System.out.println("Saving ad form");
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Advertise trans=null;
         if (registermodel.isPresent()) {
@@ -73,6 +75,8 @@ public class Advertisecontrol {
                     register.setNoOfAdvertisements(register.getNoOfAdvertisements()+1);
                     ad.setAvailablepai(ad.getPai());
                     ad.setAvailablepaisa(ad.getPaisa());
+                    ad.setHashtags(ad.getHashtags());
+                    ad.setPincodes(ad.getPincodes());
                     registerRepo.save(register);
                     trans=service.savead(ad);
                     Advertisementtransaction transaction=new Advertisementtransaction();
@@ -94,12 +98,44 @@ public class Advertisecontrol {
         return ad;
     }
 
-    @GetMapping("/{advertisementid}/commentslist")
+    @GetMapping("/commentslist/{advertisementid}")
     public List<Comments> getAllCommentList(@PathVariable("advertisementid") Integer advertisementid) {
         return service.findByadvertisementid(advertisementid);
     }
     @GetMapping("/search")
     public List<Advertise> searchAds(@RequestParam("query") String query) {
         return service.searchAds(query);
+    }
+
+    @GetMapping("/getHashTags")
+    public List<String> getHashTags() {
+        List<String> allHashtags = adrepo.findTopHashtags();
+        Map<String, Integer> hashtagCount = new HashMap<>();
+
+        // Split each hashtag string by commas and count occurrences
+        for (String hashtags : allHashtags) {
+            String[] hashtagArray = hashtags.split(",");  // Assuming comma as separator
+            for (String hashtag : hashtagArray) {
+                hashtag = hashtag.trim();  // Remove any extra spaces
+                hashtagCount.put(hashtag, hashtagCount.getOrDefault(hashtag, 0) + 1);
+            }
+        }
+        List<String> result=hashtagCount.entrySet().stream()
+                .sorted((entry1, entry2) -> entry2.getValue().compareTo(entry1.getValue()))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+        // Sort hashtags by count in descending order
+        return result;
+    }
+
+    @GetMapping("/getHashTagsAdvertisement/{query}")
+    public List<Advertise> getHashTagsAdvertisement(@PathVariable("query") String query) {
+
+        return service.getHashTagsAdvertisement(query);
+    }
+
+    @GetMapping("/getpincodesadvertisement/{query}")
+    public List<Advertise> getPinCodesAdvertisement(@PathVariable("query") String query) {
+        return service.getPinCodesAdvertisement(query);
     }
 }
