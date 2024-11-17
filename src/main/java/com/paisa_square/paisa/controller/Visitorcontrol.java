@@ -30,7 +30,7 @@ public class Visitorcontrol {
     private Registerservice registerservice;
     @Autowired
     private Advertiserepository adrepo;
-    @PostMapping("{userid}/{advertisementid}/visit")
+    @PostMapping("/visit/{userid}/{advertisementid}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Visits visit(@RequestBody Visits visit, @PathVariable("userid") Long userid, @PathVariable("advertisementid") Long advertisementid) throws Exception {
 
@@ -38,7 +38,7 @@ public class Visitorcontrol {
         Visits savevisitobj = null;
         if (advertismentmodel.isPresent()) {
             Advertise advertise = advertismentmodel.get();
-            Optional<Register> registermodel = registerservice.fetchId(advertise.getAdvertiser().getId());
+            Optional<Register> registermodel = registerRepo.findByUserId(advertise.getAdvertiser().getId());
             Register register = registermodel.get();
             //Saving data into register table
             register.setNoOfVisit(register.getNoOfVisit()+1);
@@ -74,7 +74,7 @@ public class Visitorcontrol {
         return savevisitobj;
     }
 
-    @GetMapping("{userid}/{period}/visitorgraph")
+    @GetMapping("/visitorgraph/{userid}/{period}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
@@ -87,7 +87,7 @@ public class Visitorcontrol {
             return visitorrepo.yearlygraph(userid);
         }
     }
-    @GetMapping("/{userid}/getvisitedadvertisementslist")
+    @GetMapping("/getvisitedadvertisementslist/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getvisitedadvertisementslist(@PathVariable("userid") Integer userid) {
         return adrepo.findAllByvisiteduser(userid);

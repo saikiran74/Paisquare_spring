@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200/")
 public class Commentscontrol {
     @Autowired
     private Advertiserepository adrepo;
@@ -24,24 +25,19 @@ public class Commentscontrol {
     @Autowired
     private Commentrepository commentrepo;
     @PostMapping("{userid}/{advertisementid}/comments")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception {
         Optional<Advertise> advertisemodel = commentservice.fetchId(advertisementid);
         Advertise advertisement = advertisemodel.get();
-        Optional<Register> advertiserIdModel=registerRepo.findById(advertisement.getAdvertiser().getId());
+        Optional<Register> advertiserIdModel= registerRepo.findByUserId(advertisement.getAdvertiser().getId());
         Register advertiserInRegister=advertiserIdModel.get();
-        if (advertisemodel.isPresent() && advertiserIdModel.isPresent()) {
-            advertisement.getCommenteduser().add(userid);
-            //Updating comments count in advertise table
-            advertiserInRegister.setNoOfComments(advertiserInRegister.getNoOfComments()+1);
-            advertisement.setCommentscount(advertisement.getCommentscount()+1);
-            registerRepo.save(advertiserInRegister);
-            adrepo.save(advertisement);
-            comment.setAdvertise(advertisement);
-            commentservice.savecomment(comment);
-        } else {
-            throw new IllegalArgumentException("Advertisement not found with id: " + 1);
-        }
+        advertisement.getCommenteduser().add(userid);
+        //Updating comments count in advertise table
+        advertiserInRegister.setNoOfComments(advertiserInRegister.getNoOfComments()+1);
+        advertisement.setCommentscount(advertisement.getCommentscount()+1);
+        registerRepo.save(advertiserInRegister);
+        adrepo.save(advertisement);
+        comment.setAdvertise(advertisement);
+        commentservice.savecomment(comment);
         return comment;
     }
     @GetMapping("/commentslist")

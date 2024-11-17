@@ -13,6 +13,8 @@ import java.util.Optional;
 public interface Registerrepository extends JpaRepository<Register,Long> {
     Register findByEmail(String email);
 
+    Optional<Register> findByUserId(Long user_id);
+
     @Query("SELECT a FROM Register a " +
             "INNER JOIN Followers f ON a.id = f.advertiser.id " +
             "WHERE f.user.id = :userId AND f.following = true")

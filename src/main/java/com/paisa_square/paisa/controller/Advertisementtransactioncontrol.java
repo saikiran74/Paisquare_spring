@@ -12,11 +12,11 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200")
 public class Advertisementtransactioncontrol {
     @Autowired
     private Advertisementtransactionrepository adTransRepo;
-    @GetMapping("/{userid}/getadvertisementtransactiondata")
-    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/getadvertisementtransactiondata/{userid}")
     public List<Advertisementtransaction> getadvertisementtransactiondata(@PathVariable("userid") Integer userid) {
         return adTransRepo.findAllByadvertiserId(userid);
     }

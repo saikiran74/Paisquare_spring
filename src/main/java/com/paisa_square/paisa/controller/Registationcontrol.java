@@ -10,16 +10,14 @@ import com.paisa_square.paisa.serice.Registerservice;
 import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.math.BigDecimal;
 import java.util.*;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+
 import com.paisa_square.paisa.config.JwtUtil;
-import javax.management.remote.JMXAuthenticator;
+
 import java.util.Optional;
 
 @RestController
@@ -70,7 +68,7 @@ public class Registationcontrol {
                 String saveUserInUser = registerService.saveUser(user);
                 User saveUser = userRepo.findByEmail(user.getEmail());
                 if(saveUser!=null){
-                    registerUser.setId(saveUser.getId());
+                    registerUser.setUserId(saveUser.getId());
                     registerUser.setUsername(user.getUsername());
                     registerUser.setEmail(user.getEmail());
                     registerUser.setPincode(user.getPincode());
@@ -147,14 +145,14 @@ public class Registationcontrol {
         }
     }
 
-    @GetMapping("/{userid}/profile")
+    @GetMapping("profile/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
-        return registerRepo.findById(userid);
+        return registerRepo.findByUserId(userid);
     }
-    @PostMapping("{userid}/updateProfile/brandInformation")
+    @PostMapping("updateProfile/brandInformation/{userid}")
     public Register brandInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> userProfile = registerRepo.findById(userid);
+        Optional<Register> userProfile = registerRepo.findByUserId(userid);
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
@@ -167,9 +165,9 @@ public class Registationcontrol {
         return userprofileobj;
     }
 
-    @PostMapping("{userid}/updateProfile/personalInformation")
+    @PostMapping("updateProfile/personalInformation/{userid}")
     public Register personalInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> userProfile = registerRepo.findById(userid);
+        Optional<Register> userProfile = registerRepo.findByUserId(userid);
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
@@ -183,7 +181,7 @@ public class Registationcontrol {
     }
 
 
-    @PostMapping("{userid}/updateProfile/password")
+    @PostMapping("updateProfile/password/{userid}")
     public User password(@RequestBody User profile, @PathVariable("userid") Long userid) throws Exception {
         Optional<User> userProfile = userRepo.findById(userid);
         User userprofileobj = null;
@@ -196,9 +194,9 @@ public class Registationcontrol {
     }
 
 
-    @PostMapping("{userid}/updateProfile/BrandRecommendation")
+    @PostMapping("updateProfile/BrandRecommendation/{userid}")
     public Register brandRecommendation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> userProfile = registerRepo.findById(userid);
+        Optional<Register> userProfile = registerRepo.findByUserId(userid);
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
@@ -217,9 +215,9 @@ public class Registationcontrol {
     }
 
 
-    @PostMapping("{userid}/updateProfile/socialMediaLinks")
+    @PostMapping("updateProfile/socialMediaLinks/{userid}")
     public Register socialMediaLinks(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> userProfile = registerRepo.findById(userid);
+        Optional<Register> userProfile = registerRepo.findByUserId(userid);
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
@@ -232,10 +230,10 @@ public class Registationcontrol {
         }
         return userprofileobj;
     }
-    @GetMapping("{userid}/userdata")
+    @GetMapping("userdata/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
-    public List<Register> getfollowers(@PathVariable("userid") Long userid){
-        return Collections.singletonList(registerRepo.findById(userid).orElse(null));
+    public List<Optional<Register>> getfollowers(@PathVariable("userid") Long userid){
+        return Collections.singletonList(registerRepo.findByUserId(userid));
     }
 
 }

@@ -27,16 +27,16 @@ public class Favouritescontrol {
     @Autowired
     private Advertiserepository adrepo;
 
-    @PostMapping("/{userid}/{advertisementid}/addAdvetisementToFavourite")
+    @PostMapping("/addAdvetisementToFavourite/{userid}/{advertisementid}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerservice.fetchId(userid);
+        Optional<Register> registermodel = registerrepo.findByUserId(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
 
         if (registermodel.isPresent() && advertisemodel.isPresent()) {
             Register register = registermodel.get();
             Advertise advertise=advertisemodel.get();
-            Optional<Register> AdvertiserInregisterModel=registerrepo.findById(advertise.getAdvertiser().getId());
+            Optional<Register> AdvertiserInregisterModel=registerrepo.findByUserId(advertise.getAdvertiser().getId());
             Register AdvertiserInregister =AdvertiserInregisterModel.get();
             favourite.setUser(register);
             favourite.setAdvertiser(advertise.getAdvertiser());
@@ -79,7 +79,7 @@ public class Favouritescontrol {
         return favourite;
     }
 
-    @GetMapping("{userid}/{period}/favouritegraph")
+    @GetMapping("/{period}/favouritegraph/{userid}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
@@ -93,7 +93,7 @@ public class Favouritescontrol {
             return favouritesRepo.yearlygraph(userid);
         }
     }
-    @GetMapping("/{userid}/getfavouriteadvertisementslist")
+    @GetMapping("/getfavouriteadvertisementslist/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
         return adrepo.findByfavourites(userid);

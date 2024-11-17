@@ -21,16 +21,22 @@ public class Advertise {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String brandname;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String url;
+    private String backGroundColor;
     private BigDecimal pai;
     private BigDecimal paiperclick;
     private BigDecimal availablepai;
     private BigDecimal paisa;
     private BigDecimal paisaperclick;
     private BigDecimal availablepaisa;
+    private String location=" ";
+    private Date startDate;
+    private Date endDate;
     private String country;
     private String state;
+    private String status;
     private String district;
     private String hashtags;
     private Integer likescount=0;

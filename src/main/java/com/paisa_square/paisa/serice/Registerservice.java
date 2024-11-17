@@ -168,7 +168,5 @@ public class Registerservice {
 
     }
 
-    public Optional<Register> fetchId(Long id){
-        return registerRepository.findById(id);
-    }
+
 }

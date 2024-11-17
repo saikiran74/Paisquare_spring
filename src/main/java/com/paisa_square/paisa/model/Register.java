@@ -21,8 +21,8 @@ public class Register {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(unique = true)
+    private Long userId;
     private String username;
     private String advertiserName;
     private String email;
