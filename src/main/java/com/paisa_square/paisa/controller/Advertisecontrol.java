@@ -35,7 +35,6 @@ public class Advertisecontrol {
     private Advertiserepository adrepo;
     @GetMapping("/advertisements")
     public List<Advertise> getAllAdvertisements() {
-        System.out.println("in advertisements");
         return service.findAlladvertisement();
     }
     @GetMapping("/idadvertisements/{advertisementid}")
