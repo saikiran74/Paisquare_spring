@@ -25,7 +25,7 @@ public class Chat {
     @Column(columnDefinition = "TEXT")
     private String message;
 
+    @CreationTimestamp
     private LocalDateTime timestamp;
 
-    // Getters and Setters
 }

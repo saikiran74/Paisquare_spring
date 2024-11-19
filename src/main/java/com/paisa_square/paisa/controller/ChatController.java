@@ -1,8 +1,10 @@
 package com.paisa_square.paisa.controller;
 
+import com.paisa_square.paisa.DTO.ChatHistoryUsersDTO;
 import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Advertisementtransactionrepository;
 import com.paisa_square.paisa.repository.Advertiserepository;
+import com.paisa_square.paisa.repository.ChatRepository;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.service.Advertiseservice;
 import com.paisa_square.paisa.service.ChatService;
@@ -13,6 +15,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -20,6 +24,8 @@ import java.util.List;
 public class ChatController {
     @Autowired
     private ChatService chatService;
+    @Autowired
+    private ChatRepository chatRepository;
 
     @PostMapping("/send")
     public ResponseEntity<Chat> sendMessage(@RequestBody Chat chat) {
@@ -27,10 +33,33 @@ public class ChatController {
         return ResponseEntity.ok(savedChat);
     }
 
-    @GetMapping("/{senderId}/{receiverId}")
+    @GetMapping("getmessages/{senderId}/{receiverId}")
     public ResponseEntity<List<Chat>> getMessages(@PathVariable Long senderId, @PathVariable Long receiverId) {
         List<Chat> messages = chatService.getMessages(senderId, receiverId);
         return ResponseEntity.ok(messages);
     }
+    @GetMapping("getchathistoryusers/{userId}")
+    public List<ChatHistoryUsersDTO> getChatHistoryUsers(@PathVariable Long userId) {
+        List<ChatHistoryUsersDTO> chatHistoryUsers = chatService.getChatHistoryUsers(userId);
+        System.out.println("chatHistoryUsers-> "+chatHistoryUsers);
+        if (chatHistoryUsers.isEmpty()) {
+            // Optionally, initialize an empty conversation if required
+            return new ArrayList<>();
+        }
+        return chatHistoryUsers;
+    }
+
+    @PostMapping("/initialize-chat")
+    public ResponseEntity<Chat> initializeChat(@RequestBody Chat chat) {
+        if (chat.getSenderId() != null && chat.getReceiverId() != null) {
+            chat.setTimestamp(LocalDateTime.now());
+            chatRepository.save(chat);
+            return ResponseEntity.ok(chat);
+        }
+        return ResponseEntity.badRequest().build();
+    }
+
 }
+
+
 
