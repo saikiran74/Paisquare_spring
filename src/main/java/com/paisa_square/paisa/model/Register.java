@@ -66,6 +66,10 @@ public class Register {
     private String accountType;
     private String[] brandHashTags;
     private String[] pinCodes;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
     private String brandTargetAges;
 
 

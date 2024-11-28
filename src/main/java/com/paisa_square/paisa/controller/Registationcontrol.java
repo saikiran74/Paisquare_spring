@@ -9,6 +9,8 @@ import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.service.Registerservice;
 import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -17,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.paisa_square.paisa.config.JwtUtil;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -233,7 +236,48 @@ public class Registationcontrol {
     @GetMapping("userdata/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Optional<Register>> getfollowers(@PathVariable("userid") Long userid){
+
         return Collections.singletonList(registerRepo.findByUserId(userid));
     }
+    private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
+    @PostMapping("updateProfile/upload-image/{id}")
+    public ResponseEntity<String> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
+        System.out.println("uploadProfileImage");
+        try {
+            if (image.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("No image file provided.");
+            }
+
+            // Check file size (optional)
+            if (image.getSize() > MAX_FILE_SIZE) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("File size exceeds the limit.");
+            }
+
+            registerService.saveProfileImage(id, image);
+            return ResponseEntity.ok("Image uploaded successfully");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to upload image: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("updateProfile/profile-image/{id}")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable Long id) {
+        System.out.println("getProfileImage");
+        byte[] image = registerService.getProfileImage(id);
+        System.out.println("Image-->" +ResponseEntity.ok()
+                .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
+                .body(image));
+        if (image != null) {
+            return ResponseEntity.ok()
+                    .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
+                    .body(image);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
 
 }

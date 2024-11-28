@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Random;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class Registerservice {
@@ -164,5 +166,25 @@ public class Registerservice {
 
     }
 
+    public void saveProfileImage(Long id, MultipartFile image) throws IOException {
+        // Fetch the Register object by id
+        Register register = registerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Get the image bytes from MultipartFile
+        byte[] imageBytes = image.getBytes();
+
+        // Save the image bytes to the Register entity
+        register.setProfileImage(imageBytes);
+
+        // Save the Register entity with the new image
+        registerRepository.save(register);
+    }
+
+
+    public byte[] getProfileImage(Long id) {
+        Register register = registerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return register.getProfileImage();
+    }
 }
