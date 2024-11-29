@@ -1,13 +1,10 @@
 package com.paisa_square.paisa.controller;
 
-import com.paisa_square.paisa.model.ApiMessage;
-import com.paisa_square.paisa.model.User;
-import com.paisa_square.paisa.model.Role;
+import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.RoleRepository;
 import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.service.Registerservice;
-import com.paisa_square.paisa.model.Register;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -278,6 +275,11 @@ public class Registationcontrol {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
-
+    @PostMapping("/rating/{userid}/{advertiserid}")
+    @CrossOrigin(origins = "http://localhost:4200/")
+    public Optional<Register> rating(@RequestBody Profilerating rating, @PathVariable("userid") Long userid, @PathVariable("advertiserid") Long advertiserid) throws Exception{
+        registerService.saveRating(rating,userid,advertiserid);
+        return registerRepo.findByUserId(userid);
+    }
 
 }

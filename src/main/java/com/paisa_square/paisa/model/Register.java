@@ -46,6 +46,8 @@ public class Register {
     private String brandDescription;
     private String brandTagLine;
     private String website;
+    private Number NoOfRating=BigDecimal.valueOf(0);
+    private BigDecimal Rating=BigDecimal.valueOf(0);
     private Integer NoOfAdvertisements=0;
     private Integer NoOfLikes=0;
     private Integer NoOfComments=0;

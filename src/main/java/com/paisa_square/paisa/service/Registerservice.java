@@ -1,8 +1,8 @@
 package com.paisa_square.paisa.service;
 
-import com.paisa_square.paisa.model.User;
+import com.paisa_square.paisa.model.*;
+import com.paisa_square.paisa.repository.Profileratingrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -13,6 +13,8 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -20,7 +22,13 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Random;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import static java.lang.Long.sum;
 
 @Service
 public class Registerservice {
@@ -32,6 +40,8 @@ public class Registerservice {
     private String paiSquareOfcEmail;
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private Profileratingrepository profileratingrepo;
     private final Random random = new Random();
     public Register saveUserInRegister(Register user ){
         return registerRepository.save(user);
@@ -186,5 +196,28 @@ public class Registerservice {
         Register register = registerRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return register.getProfileImage();
+    }
+
+    public Boolean saveRating(Profilerating rating, Long userid, Long advertiserid ) throws Exception{
+        Profilerating ratingobj=null;
+        Optional<Register> registermodel = registerRepository.findByUserId(userid);
+        Optional<Profilerating> ratingmodel = profileratingrepo.findByUserIdAndAdvertiserId(userid,advertiserid);
+        if(ratingmodel.isPresent() && registermodel.isPresent()){
+            Profilerating profilerating=ratingmodel.get();
+            profilerating.setRating(rating.getRating());
+            profileratingrepo.save(profilerating);
+
+        } else {
+            profileratingrepo.save(rating);
+        }
+        if(registermodel.isPresent()){
+            Register register =registermodel.get();
+            BigDecimal userExistingRating=register.getRating();
+            Number noOfUserRating=register.getNoOfRating();
+            if(noOfUserRating>0){
+                register.setRating(sum(userExistingRating,rating.getRating()));
+            }
+        }
+        return true;
     }
 }

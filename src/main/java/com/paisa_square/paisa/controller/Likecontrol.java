@@ -97,4 +97,9 @@ public class Likecontrol {
     public List<Advertise> getlikedadvertisementslist(@PathVariable("userid") Integer userid) {
         return adrepo.findAllBylikes(userid);
     }
+
+    @GetMapping("/likelist/{userid}")
+    public List<Likes> getlikeFromRemote(@PathVariable("userid") Long userid) {
+        return likerepo.findAllByAdvertiserId(userid);
+    }
 }
