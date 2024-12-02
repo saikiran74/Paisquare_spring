@@ -276,10 +276,9 @@ public class Registationcontrol {
         }
     }
     @PostMapping("/rating/{userid}/{advertiserid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Optional<Register> rating(@RequestBody Profilerating rating, @PathVariable("userid") Long userid, @PathVariable("advertiserid") Long advertiserid) throws Exception{
+        System.out.println("In rating control "+rating);
         registerService.saveRating(rating,userid,advertiserid);
         return registerRepo.findByUserId(userid);
     }
-
 }
