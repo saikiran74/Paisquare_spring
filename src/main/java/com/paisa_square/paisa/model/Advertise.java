@@ -40,6 +40,7 @@ public class Advertise {
     private String district;
     private String hashtags;
     private String pincodes;
+    private String advertisement_type;
     private Integer likescount=0;
     private Integer commentscount=0;
     private Integer visitscount=0;
