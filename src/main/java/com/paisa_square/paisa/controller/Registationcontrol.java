@@ -232,9 +232,8 @@ public class Registationcontrol {
     }
     @GetMapping("userdata/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
-    public List<Optional<Register>> getfollowers(@PathVariable("userid") Long userid){
-
-        return Collections.singletonList(registerRepo.findByUserId(userid));
+    public Optional<Register> findUserProfile(@PathVariable("userid") Long userId){
+        return registerRepo.findByUserId(userId);
     }
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     @PostMapping("updateProfile/upload-image/{id}")
