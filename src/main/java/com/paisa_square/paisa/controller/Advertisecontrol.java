@@ -38,11 +38,12 @@ public class Advertisecontrol {
         return service.findAlladvertisement();
     }
     @GetMapping("/idadvertisements/{advertisementid}")
-    public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Long advertisementid) {
-        return Collections.singletonList(adrepo.findById(advertisementid).orElse(null));
+    public Advertise getIDAdvertisements(@PathVariable("advertisementid") Integer advertisementid) {
+        return adrepo.findByadvertisementId(advertisementid);
     }
     @GetMapping("/useradvertisements/{userid}")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
+        System.out.println("userid"+userid);
         return service.findAllByadvertiserId(userid);
     }
 

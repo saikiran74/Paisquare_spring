@@ -1,8 +1,8 @@
 package com.paisa_square.paisa.service;
 
-import com.paisa_square.paisa.model.User;
+import com.paisa_square.paisa.model.*;
+import com.paisa_square.paisa.repository.Profileratingrepository;
 import com.paisa_square.paisa.repository.Registerrepository;
-import com.paisa_square.paisa.model.Register;
 import com.paisa_square.paisa.repository.UserRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -12,6 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,6 +23,9 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Random;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.web.multipart.MultipartFile;
+
+import static java.lang.Long.sum;
 
 @Service
 public class Registerservice {
@@ -30,6 +37,8 @@ public class Registerservice {
     private String paiSquareOfcEmail;
     @Autowired
     private UserRepository userRepo;
+    @Autowired
+    private Profileratingrepository profileratingrepo;
     private final Random random = new Random();
     public Register saveUserInRegister(Register user ){
         return registerRepository.save(user);
@@ -164,5 +173,88 @@ public class Registerservice {
 
     }
 
+    public void saveProfileImage(Long id, MultipartFile image) throws IOException {
+        // Fetch the Register object by id
+        Register register = registerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
+        // Get the image bytes from MultipartFile
+        byte[] imageBytes = image.getBytes();
+
+        // Save the image bytes to the Register entity
+        register.setProfileImage(imageBytes);
+
+        // Save the Register entity with the new image
+        registerRepository.save(register);
+    }
+
+
+    public byte[] getProfileImage(Long id) {
+        Register register = registerRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return register.getProfileImage();
+    }
+
+
+    public Boolean saveRating(Profilerating rating, Long userid, Long advertiserid) throws Exception {
+        System.out.println("In saveRating: " + rating);
+        System.out.println("In saveRating: userId = " + userid);
+        System.out.println("In saveRating: advertiserId = " + advertiserid);
+        Optional<Register> registerModel = registerRepository.findByUserId(userid);
+        Optional<Register> registerModelAdvertiser = registerRepository.findByUserId(advertiserid);
+        Optional<Profilerating> ratingModel = profileratingrepo.findByUserIdAndAdvertiserId(userid, advertiserid);
+
+        rating.setAdvertiser(registerModelAdvertiser.get());
+        rating.setUser(registerModel.get());
+        System.out.println("ratingobj"+rating);
+        if (ratingModel.isPresent() && registerModel.isPresent()) {
+            // Update existing rating
+            Profilerating existingRating = ratingModel.get();
+            existingRating.setRating(rating.getRating());
+
+            profileratingrepo.save(existingRating);
+
+            // Update rating in Register
+            Register register = updateRatingInRegister(rating, registerModel.get());
+            registerRepository.save(register);
+
+        } else {
+            // Save new rating
+            profileratingrepo.save(rating);
+
+            // If register model is present, update it
+            registerModel.ifPresent(register -> {
+                Register updatedRegister = updateRatingInRegister(rating, register);
+                registerRepository.save(updatedRegister);
+            });
+        }
+
+        return true;
+    }
+
+    private Register updateRatingInRegister(Profilerating rating, Register register) {
+        System.out.println("Updating rating for register: " + rating);
+
+        BigDecimal userExistingRating = register.getRating();
+        int noOfUserRating = (int) register.getNoOfRating();
+
+        // Calculate new rating
+        BigDecimal updatedRating;
+        if (noOfUserRating > 0) {
+            BigDecimal newRating = rating.getRating();
+            updatedRating = userExistingRating
+                    .multiply(BigDecimal.valueOf(noOfUserRating))
+                    .add(newRating)
+                    .divide(BigDecimal.valueOf(noOfUserRating + 1), RoundingMode.HALF_UP);
+        } else {
+            // If no ratings exist, directly set the new rating
+            updatedRating = rating.getRating();
+        }
+
+        // Update register object
+        register.setRating(updatedRating);
+        register.setNoOfRating(noOfUserRating + 1);
+
+        return register;
+    }
 }

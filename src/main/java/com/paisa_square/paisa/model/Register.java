@@ -46,6 +46,8 @@ public class Register {
     private String brandDescription;
     private String brandTagLine;
     private String website;
+    private Number NoOfRating=0;
+    private BigDecimal Rating=BigDecimal.ZERO;
     private Integer NoOfAdvertisements=0;
     private Integer NoOfLikes=0;
     private Integer NoOfComments=0;
@@ -66,6 +68,10 @@ public class Register {
     private String accountType;
     private String[] brandHashTags;
     private String[] pinCodes;
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] profileImage;
     private String brandTargetAges;
 
 

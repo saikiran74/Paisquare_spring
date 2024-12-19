@@ -24,7 +24,7 @@ public class Commentscontrol {
     private Commentservice commentservice;
     @Autowired
     private Commentrepository commentrepo;
-    @PostMapping("{userid}/{advertisementid}/comments")
+    @PostMapping("/comments/{userid}/{advertisementid}")
     public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception {
         Optional<Advertise> advertisemodel = commentservice.fetchId(advertisementid);
         Advertise advertisement = advertisemodel.get();
@@ -45,4 +45,5 @@ public class Commentscontrol {
     public List<Comments> getAllComments() {
         return commentrepo.findAll();
     }
+
 }
