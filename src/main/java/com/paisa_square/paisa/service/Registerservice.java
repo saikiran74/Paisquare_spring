@@ -44,13 +44,10 @@ public class Registerservice {
         return registerRepository.save(user);
     }
     public String saveUser(User user) throws MessagingException {
-        System.out.println("in register service");
         String otp=generateOtp();
         user.setEmailOTP(otp);
         String sendOtpEmailResponse=sendOtpEmail(user.getEmail(),otp,user.getUsername());
         String emailResponse="none";
-        System.out.println("user.getEmail()->"+user.getEmail());
-        System.out.println("sendOtpEmailResponse "+sendOtpEmailResponse);
         if(Objects.equals(sendOtpEmailResponse, "emailSent")){
             userRepo.save(user);
             emailResponse="emailSent";
@@ -60,13 +57,11 @@ public class Registerservice {
         return emailResponse;
     }
     private String generateOtp() {
-        System.out.println("generate OTP");
         return String.valueOf(100000 + random.nextInt(900000)); // 6-digit OTP
     }
 
 
     private String sendOtpEmail(String to, String otp,String username) {
-        System.out.println("In sendotpemail page ->");
         MimeMessage message = mailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message);
         String emailResponse="";
@@ -88,7 +83,6 @@ public class Registerservice {
             );
             mailSender.send(message);
             emailResponse="emailSent";
-            System.out.println("Email sent " + to);
         } catch (MailException | MessagingException e) {
             // Log the exception for further investigation
             System.err.println("Failed to send email to " + to);
@@ -99,22 +93,16 @@ public class Registerservice {
         return emailResponse;
     }
     public boolean verifyOtp(String email, String otp) {
-        System.out.println("verify otp service");
         Optional<User> userOptional = Optional.ofNullable(userRepo.findByEmail(email));
-        System.out.println(userOptional);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
-            System.out.println("user.getEmailOTP() "+user.getEmailOTP());
-            System.out.println("otp "+otp);
             if(Objects.equals(user.getEmailOTP(), otp)){
                 user.setEmailOTP("Verified");
                 userRepo.save(user);
                 accountCreationEmail(user.getEmail(),user.getUsername());
-                System.out.println("valid OTP");
                 return true;
             }
             else{
-                System.out.println("Invalid OTP");
                 return false;
             }
         } else{
@@ -142,7 +130,6 @@ public class Registerservice {
             mailSender.send(message);
         } catch (MailException | MessagingException e) {
             System.err.println("Failed to send email to " + to);
-            System.err.println("Error message: " + e.getMessage());
         }
     }
     public Register fetchUserByEmailId(String email){
@@ -151,12 +138,10 @@ public class Registerservice {
     public String fetchUserByEmailIdAndPassword(String email,String password){
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
         String hashedPassword = passwordEncoder.encode(password);
-        System.out.println(hashedPassword);
         Optional<User> checkingEmailIdOptional = Optional.ofNullable(userRepo.findByEmail(email));
 
         if(checkingEmailIdOptional.isPresent()){
             boolean passwordMatching=passwordEncoder.matches(password, checkingEmailIdOptional.get().getPassword());
-            System.out.println("passwordMatching  "+passwordMatching);
             if (passwordMatching) {
                 User user = checkingEmailIdOptional.get();
                 if(Objects.equals(user.getEmailOTP(), "Verified")){
@@ -197,16 +182,12 @@ public class Registerservice {
 
 
     public Boolean saveRating(Profilerating rating, Long userid, Long advertiserid) throws Exception {
-        System.out.println("In saveRating: " + rating);
-        System.out.println("In saveRating: userId = " + userid);
-        System.out.println("In saveRating: advertiserId = " + advertiserid);
         Optional<Register> registerModel = registerRepository.findByUserId(userid);
         Optional<Register> registerModelAdvertiser = registerRepository.findByUserId(advertiserid);
         Optional<Profilerating> ratingModel = profileratingrepo.findByUserIdAndAdvertiserId(userid, advertiserid);
 
         rating.setAdvertiser(registerModelAdvertiser.get());
         rating.setUser(registerModel.get());
-        System.out.println("ratingobj"+rating);
         if (ratingModel.isPresent() && registerModel.isPresent()) {
             // Update existing rating
             Profilerating existingRating = ratingModel.get();
@@ -233,8 +214,6 @@ public class Registerservice {
     }
 
     private Register updateRatingInRegister(Profilerating rating, Register register) {
-        System.out.println("Updating rating for register: " + rating);
-
         BigDecimal userExistingRating = register.getRating();
         int noOfUserRating = (int) register.getNoOfRating();
 

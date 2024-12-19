@@ -38,7 +38,6 @@ public class Registationcontrol {
     @PostMapping("/registeruser")
     @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
-        System.out.println("in register control");
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
@@ -51,7 +50,6 @@ public class Registationcontrol {
             User existingUser = userRepo.findByEmail(tempEmailId);
             if (existingUser != null) {
                 if (Objects.equals(existingUser.getEmailOTP(), "Verified")) {
-                    System.out.println("email id is exist");
                     return ResponseEntity.ok(new ApiMessage("error", "emailExists", "Email ID already exists"));
                 } else {
                     existingUser.setAccountType(user.getAccountType());
@@ -80,7 +78,6 @@ public class Registationcontrol {
                 return statusMessageLogMethod(saveUserInUser);
             }
         }
-        System.out.println("Issue while creating account!");
         return ResponseEntity.ok(new ApiMessage("error","issueInCreating", "Issue while creating account"));
     }
     public ResponseEntity<ApiMessage> statusMessageLogMethod(String savingUserStatus) {
@@ -94,7 +91,6 @@ public class Registationcontrol {
     }
     @PostMapping("/verifyOTP")
     public ResponseEntity<?> verifyOtp(@RequestBody User request) {
-        System.out.println("In verifyOTP page"+request.getEmail()+ request.getEmailOTP());
         boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
         if (isVerified) {
             //return ResponseEntity.status(400).body(new ApiMessage("success", "OTP verified."));
@@ -115,7 +111,6 @@ public class Registationcontrol {
             ApiMessage apiMessage;
             User user = null;
             loginStatus=registerService.fetchUserByEmailIdAndPassword(tempEmailId,tempPassword);
-            System.out.println("loginStatus -->"+ loginStatus);
             if (Objects.equals(loginStatus, "validUser")) {
                 apiMessage = new ApiMessage("success", "validUser", "Login success.");
                 user = userRepo.findByEmail(tempEmailId);
@@ -128,7 +123,6 @@ public class Registationcontrol {
             } else {
                 apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
             }
-            System.out.println("apiMessage -->"+apiMessage);
             if(user!=null){
                 String token = jwtUtil.generateToken(user.getEmail());
                 response.put("token",token);
@@ -238,7 +232,6 @@ public class Registationcontrol {
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     @PostMapping("updateProfile/upload-image/{id}")
     public ResponseEntity<String> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
-        System.out.println("uploadProfileImage");
         try {
             if (image.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -261,11 +254,8 @@ public class Registationcontrol {
 
     @GetMapping("updateProfile/profile-image/{id}")
     public ResponseEntity<byte[]> getProfileImage(@PathVariable Long id) {
-        System.out.println("getProfileImage");
         byte[] image = registerService.getProfileImage(id);
-        System.out.println("Image-->" +ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
-                .body(image));
+
         if (image != null) {
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
@@ -276,7 +266,6 @@ public class Registationcontrol {
     }
     @PostMapping("/rating/{userid}/{advertiserid}")
     public Optional<Register> rating(@RequestBody Profilerating rating, @PathVariable("userid") Long userid, @PathVariable("advertiserid") Long advertiserid) throws Exception{
-        System.out.println("In rating control "+rating);
         registerService.saveRating(rating,userid,advertiserid);
         return registerRepo.findByUserId(userid);
     }

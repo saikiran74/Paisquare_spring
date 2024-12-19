@@ -41,7 +41,6 @@ public class ChatController {
     @GetMapping("getchathistoryusers/{userId}")
     public List<ChatHistoryUsersDTO> getChatHistoryUsers(@PathVariable Long userId) {
         List<ChatHistoryUsersDTO> chatHistoryUsers = chatService.getChatHistoryUsers(userId);
-        System.out.println("chatHistoryUsers-> "+chatHistoryUsers);
         if (chatHistoryUsers.isEmpty()) {
             // Optionally, initialize an empty conversation if required
             return new ArrayList<>();

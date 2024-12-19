@@ -41,21 +41,18 @@ public class Favouritescontrol {
             favourite.setAdvertiser(advertise.getAdvertiser());
             favourite.setAdvertisement(advertise);
             if(advertise.getFavourites().contains(userid)){
-                System.out.println("advertisementid exist in the register saved removing..");
                 advertise.getFavourites().remove(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()-1);
                 registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
             else{
-                System.out.println("advertiserid not  exist saving the register saved adding..");
                 advertise.getFavourites().add(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()+1);
                 registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
         }
-        System.out.println("addAdvetisementToFavourite->advertisment id not exits"+userid);
         Advertise advertise2=advertisemodel.get();
         Optional<Favourites> favouritesModel = favouritesRepo.findByAdvertisementIdAndUserIdAndAdvertiserId(advertisementid, userid,advertise2.getAdvertiser().getId());
         if (favouritesModel.isPresent()) {

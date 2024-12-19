@@ -37,18 +37,14 @@ public class Followercontrol {
             follow.setUser(register);
             if(register.getFollowing().contains(advertiserid)){
                 register.getFollowing().remove(advertiserid);
-                System.out.println("User present in following list removing it");
             }
             else{
-                System.out.println("User present not in following list adding it");
                 register.getFollowing().add(advertiserid);
             }
             if(advertiser.getFollowers().contains(userid)){
-                System.out.println("User present in follower list removing it");
                 advertiser.getFollowers().remove(userid);
             }
             else{
-                System.out.println("User present not in follower list adding it");
                 advertiser.getFollowers().add(userid);
             }
             Registerrepo.save(register);

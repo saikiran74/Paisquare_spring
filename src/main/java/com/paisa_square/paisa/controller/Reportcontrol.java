@@ -19,7 +19,6 @@ public class Reportcontrol {
     @CrossOrigin(origins = "http://localhost:4200/")
     public Report report(@RequestBody Report report) throws Exception {
         Reportrepo.save(report);
-        System.out.println("report saved");
         return report;
     }
 }

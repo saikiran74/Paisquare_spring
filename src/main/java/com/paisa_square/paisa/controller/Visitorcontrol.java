@@ -47,27 +47,19 @@ public class Visitorcontrol {
             advertise.setVisitscount(advertise.getVisitscount()+1);
             // Saving data into advertise_visiteduser table
 
-            if(advertise.getVisiteduser().contains(userid)){
-                System.out.println("user exist in the visiteduser");
+            if(advertise.getPaiperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepai().subtract(advertise.getPaiperclick())).compareTo(BigDecimal.ZERO)>=0){
+                advertise.setAvailablepai(advertise.getAvailablepai().subtract(advertise.getPaiperclick()));
             }
-            else{
-                if(advertise.getPaiperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepai().subtract(advertise.getPaiperclick())).compareTo(BigDecimal.ZERO)>=0){
-                    advertise.setAvailablepai(advertise.getAvailablepai().subtract(advertise.getPaiperclick()));
-                }
-                if(advertise.getPaisaperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick())).compareTo(BigDecimal.ZERO)>=0){
-                    advertise.setAvailablepaisa(advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick()));
-                }
-                System.out.println("user not  exist saving the visiteduser");
-                advertise.getVisiteduser().add(userid);
-                adrepo.save(advertise);
+            if(advertise.getPaisaperclick().compareTo(BigDecimal.ZERO)>=0 && (advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick())).compareTo(BigDecimal.ZERO)>=0){
+                advertise.setAvailablepaisa(advertise.getAvailablepaisa().subtract(advertise.getPaisaperclick()));
             }
-            System.out.println("user not  exist saving the visit table"+advertisementid);
+            advertise.getVisiteduser().add(userid);
+            adrepo.save(advertise);
             savevisitobj = visitorService.savevisitor(visit);
             if (visit == null) {
                 throw new Exception("Bad contactus details");
             }
         }
-        System.out.println("advertisment id not exits"+advertisementid);
         return savevisitobj;
     }
 

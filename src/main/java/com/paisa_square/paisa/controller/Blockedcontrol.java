@@ -40,12 +40,10 @@ public class Blockedcontrol {
             block.setAdvertiser(advertiser);
             block.setUser(register);
             if(register.getBlocked().contains(advertiserid)){
-                System.out.println("advertiserid exist in the register  blocked removing.");
                 register.getBlocked().remove(advertiserid);
                 registerRepo.save(register);
             }
             else{
-                System.out.println("advertiserid not  exist saving the register blocked adding");
                 register.getBlocked().add(advertiserid);
                 registerRepo.save(register);
             }
@@ -66,7 +64,6 @@ public class Blockedcontrol {
         }
         else
             blockedrepo.save(block);
-        System.out.println("blockadvertiser->advertisment id not exits"+userid);
         return block;
     }
     @GetMapping("/UserBlockedProfiles/{userid}")

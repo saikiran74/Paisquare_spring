@@ -39,7 +39,6 @@ public class Likecontrol {
             like.setAdvertiser(advertise.getAdvertiser());
             //Updating advertise_likes
             if(advertise.getLikes().contains(userid)) {
-                System.out.println("Already user like this"+advertisementid);
                 advertise.getLikes().remove(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()-1);
@@ -48,7 +47,6 @@ public class Likecontrol {
                 adrepo.save(advertise);
             }
             else{
-                System.out.println("user not liked this"+advertisementid);
                 advertise.getLikes().add(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()+1);
