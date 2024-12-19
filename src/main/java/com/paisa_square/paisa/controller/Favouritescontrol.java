@@ -75,7 +75,7 @@ public class Favouritescontrol {
         return favourite;
     }
 
-    @GetMapping("/{period}/favouritegraph/{userid}")
+    @GetMapping("/favouritegraph/{userid}/{period}")
     @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
