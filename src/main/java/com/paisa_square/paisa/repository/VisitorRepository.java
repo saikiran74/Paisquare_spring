@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 @EnableJpaRepositories
 public interface VisitorRepository extends JpaRepository<Visits,Long> {
@@ -35,4 +36,6 @@ public interface VisitorRepository extends JpaRepository<Visits,Long> {
             "GROUP BY day(a.lastupdate) " +
             "ORDER BY day(a.lastupdate)")
     List<Object[]> lastmonth(@Param("id") Long id);
+
+    Optional<Visits> findByUseridAndAdvertisement_Id(String userid, Long advertisementId);
 }

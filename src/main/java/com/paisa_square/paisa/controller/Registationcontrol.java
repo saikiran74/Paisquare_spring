@@ -71,7 +71,7 @@ public class Registationcontrol {
                     registerUser.setEmail(user.getEmail());
                     registerUser.setPincode(user.getPincode());
                     registerUser.setAccountType(user.getAccountType());
-                    registerUser.setPai(new BigDecimal(500));
+                    registerUser.setPai(new BigDecimal(1000));
                     registerUser.setPaisa(new BigDecimal(0));
                     registerService.saveUserInRegister(registerUser);
                 }
