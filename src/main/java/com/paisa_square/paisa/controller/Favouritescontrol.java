@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Favouritescontrol {
     @Autowired
     private Favouritesrepository favouritesRepo;
@@ -27,7 +28,6 @@ public class Favouritescontrol {
     private Advertiserepository adrepo;
 
     @PostMapping("/addAdvetisementToFavourite/{userid}/{advertisementid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerrepo.findByUserId(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
@@ -76,7 +76,6 @@ public class Favouritescontrol {
     }
 
     @GetMapping("/favouritegraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return favouritesRepo.weeklygraph(userid);
@@ -90,7 +89,6 @@ public class Favouritescontrol {
         }
     }
     @GetMapping("/getfavouriteadvertisementslist/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
         return adrepo.findByfavourites(userid);
     }

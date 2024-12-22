@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Commentscontrol {
     @Autowired
     private Advertiserepository adrepo;
@@ -41,7 +41,6 @@ public class Commentscontrol {
         return comment;
     }
     @GetMapping("/commentslist")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Comments> getAllComments() {
         return commentrepo.findAll();
     }

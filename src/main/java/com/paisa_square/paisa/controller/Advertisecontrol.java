@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static java.math.BigDecimal.valueOf;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Advertisecontrol {
     @Autowired
     private Registerservice registerservice;
@@ -47,7 +47,6 @@ public class Advertisecontrol {
     }
 
     @PostMapping("/advertise/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Advertise trans=null;

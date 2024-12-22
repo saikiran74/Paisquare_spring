@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Followercontrol {
     @Autowired
     private Followerservice service;
@@ -26,7 +26,6 @@ public class Followercontrol {
     private Advertiserepository adrepo;
 
     @PostMapping("/follow/{userid}/{advertiserid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = Registerrepo.findByUserId(userid);
         Optional<Register> advertisermodel = Registerrepo.findByUserId(advertiserid);
@@ -68,7 +67,6 @@ public class Followercontrol {
         return follow;
     }
     @GetMapping("/followersgraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> followersgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return followersrepo.weeklygraph(userid);

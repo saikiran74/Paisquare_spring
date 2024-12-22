@@ -11,12 +11,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Reportcontrol {
 
     @Autowired
     private Reportrepository Reportrepo;
     @PostMapping("/reportadvertisement")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Report report(@RequestBody Report report) throws Exception {
         Reportrepo.save(report);
         return report;

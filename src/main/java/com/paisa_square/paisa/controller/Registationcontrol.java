@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Registationcontrol {
     @Autowired
     private Registerservice registerService;
@@ -36,7 +36,6 @@ public class Registationcontrol {
     private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     @PostMapping("/registeruser")
-    @CrossOrigin(origins = "http://localhost:4200")
     public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -101,7 +100,6 @@ public class Registationcontrol {
     }
 
     @PostMapping("/login")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPassword=login.getPassword();
@@ -140,7 +138,6 @@ public class Registationcontrol {
     }
 
     @GetMapping("profile/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
         return registerRepo.findByUserId(userid);
     }
@@ -225,7 +222,6 @@ public class Registationcontrol {
         return userprofileobj;
     }
     @GetMapping("userdata/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> findUserProfile(@PathVariable("userid") Long userId){
         return registerRepo.findByUserId(userId);
     }

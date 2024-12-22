@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Blockedcontrol {
     @Autowired
     private Followerservice service;
@@ -30,7 +30,6 @@ public class Blockedcontrol {
     @Autowired
     private Advertiserepository adrepo;
     @PostMapping("/blockadvertiser/{userid}/{advertiserid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Blockedadvertiser block(@RequestBody Blockedadvertiser block, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Optional<Register> advertisermodel = registerRepo.findByUserId(advertiserid);
@@ -76,7 +75,6 @@ public class Blockedcontrol {
         }
     }
     @GetMapping("/getUserBlockedAdvertisementsList/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserBlockedAdvertisementsList(@PathVariable("userid") Long userid) {
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
         if (registermodel.isPresent()) {

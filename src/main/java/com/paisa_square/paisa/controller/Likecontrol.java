@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Likecontrol {
     @Autowired
     private Registerrepository registerRepo;
@@ -24,7 +25,6 @@ public class Likecontrol {
     @Autowired
     private Likerepository likerepo;
     @PostMapping("/like/{userid}/{advertisementid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Likes like(@RequestBody Likes like,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception{
         Likes likeobj=null;
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
@@ -77,7 +77,6 @@ public class Likecontrol {
         return likeobj;
     }
     @GetMapping("/likesgraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> likegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return likerepo.weeklygraph(userid);

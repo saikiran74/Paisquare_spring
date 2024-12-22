@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Visitorcontrol {
     @Autowired
     private VisitorService visitorService;
@@ -28,7 +29,6 @@ public class Visitorcontrol {
     @Autowired
     private Advertiserepository adrepo;
     @PostMapping("/visit/{userid}/{advertisementid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Visits visit(@RequestBody Visits visit, @PathVariable("userid") Long userid, @PathVariable("advertisementid") Long advertisementid) throws Exception {
 
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
@@ -72,7 +72,6 @@ public class Visitorcontrol {
     }
 
     @GetMapping("/visitorgraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return visitorrepo.weeklygraph(userid);
