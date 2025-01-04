@@ -21,7 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "${cors.allowedOrigins}")
+@CrossOrigin(origins = "https://paisquare.com")
 public class Registationcontrol {
     @Autowired
     private Registerservice registerService;
@@ -35,7 +35,14 @@ public class Registationcontrol {
     @Autowired
     private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
+    @GetMapping("/")
+    @CrossOrigin(origins = "https://paisquare.com")
+    public String home() {
+        return "Welcome to PaiSquare API!";
+    }
     @PostMapping("/registeruser")
+    @CrossOrigin(origins = "https://paisquare.com")
     public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -89,6 +96,7 @@ public class Registationcontrol {
         }
     }
     @PostMapping("/verifyOTP")
+    @CrossOrigin(origins = "https://paisquare.com")
     public ResponseEntity<?> verifyOtp(@RequestBody User request) {
         boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
         if (isVerified) {
@@ -100,6 +108,7 @@ public class Registationcontrol {
     }
 
     @PostMapping("/login")
+    @CrossOrigin(origins = "https://paisquare.com")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPassword=login.getPassword();
