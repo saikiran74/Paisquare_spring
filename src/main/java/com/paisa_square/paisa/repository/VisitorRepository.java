@@ -37,5 +37,13 @@ public interface VisitorRepository extends JpaRepository<Visits,Long> {
             "ORDER BY day(a.lastupdate)")
     List<Object[]> lastmonth(@Param("id") Long id);
 
-    Optional<Visits> findByUseridAndAdvertisement_Id(String userid, Long advertisementId);
+    @Query("SELECT concat(day(a.lastupdate),'th') AS date, COUNT(a) AS count " +
+            "FROM Visits a " +
+            "WHERE a.advertiser.id = :id AND a.visited=true AND " +
+            "DATE_FORMAT(CURDATE(), '%d')=DATE_FORMAT(a.lastupdate, '%d')" +
+            "GROUP BY day(a.lastupdate) " +
+            "ORDER BY day(a.lastupdate)")
+    List<Object[]> today(@Param("id") Long id);
+
+    List<Visits> findByUseridAndAdvertisement_Id(String userid, Long advertisementId);
 }

@@ -32,12 +32,12 @@ public class Visitorcontrol {
     public Visits visit(@RequestBody Visits visit, @PathVariable("userid") Long userid, @PathVariable("advertisementid") Long advertisementid) throws Exception {
 
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
-        Optional<Visits> existingVisit = visitorrepo.findByUseridAndAdvertisement_Id(String.valueOf(userid), advertisementid);
+        List<Visits> existingVisit = visitorrepo.findByUseridAndAdvertisement_Id(String.valueOf(userid), advertisementid);
         Visits savevisitobj = null;
         if (advertismentmodel.isPresent()) {
             Advertise advertise = advertismentmodel.get();
-            Optional<Register> registermodel = registerRepo.findByUserId(advertise.getAdvertiser().getId());
-            Optional<Register> registermodelOfUser = registerRepo.findByUserId(userid);
+            Optional<Register> registermodel = registerRepo.findById(advertise.getAdvertiser().getId());
+            Optional<Register> registermodelOfUser = registerRepo.findById(userid);
             Register register = registermodel.get();
             Register registerOfUser = registermodelOfUser.get();
             //Saving data into register table
@@ -73,13 +73,17 @@ public class Visitorcontrol {
 
     @GetMapping("/visitorgraph/{userid}/{period}")
     public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        System.out.println("period"+period);
         if(Objects.equals(period, "weekly")){
             return visitorrepo.weeklygraph(userid);
         } else if (Objects.equals(period, "lastmonth")) {
             return visitorrepo.lastmonth(userid);
+        } else if (Objects.equals(period, "Today")) {
+            System.out.println("visitorrepo.today(userid) "+visitorrepo.today(userid));
+            return visitorrepo.today(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return visitorrepo.thismonth(userid);
-        } else{
+        }else{
             return visitorrepo.yearlygraph(userid);
         }
     }
