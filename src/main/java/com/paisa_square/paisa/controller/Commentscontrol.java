@@ -28,7 +28,7 @@ public class Commentscontrol {
     public Comments comment(@RequestBody Comments comment,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception {
         Optional<Advertise> advertisemodel = commentservice.fetchId(advertisementid);
         Advertise advertisement = advertisemodel.get();
-        Optional<Register> advertiserIdModel= registerRepo.findByUserId(advertisement.getAdvertiser().getId());
+        Optional<Register> advertiserIdModel= registerRepo.findById(advertisement.getAdvertiser().getId());
         Register advertiserInRegister=advertiserIdModel.get();
         advertisement.getCommenteduser().add(userid);
         //Updating comments count in advertise table

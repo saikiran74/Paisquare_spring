@@ -29,13 +29,13 @@ public class Favouritescontrol {
 
     @PostMapping("/addAdvetisementToFavourite/{userid}/{advertisementid}")
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerrepo.findByUserId(userid);
+        Optional<Register> registermodel = registerrepo.findById(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
 
         if (registermodel.isPresent() && advertisemodel.isPresent()) {
             Register register = registermodel.get();
             Advertise advertise=advertisemodel.get();
-            Optional<Register> AdvertiserInregisterModel=registerrepo.findByUserId(advertise.getAdvertiser().getId());
+            Optional<Register> AdvertiserInregisterModel=registerrepo.findById(advertise.getAdvertiser().getId());
             Register AdvertiserInregister =AdvertiserInregisterModel.get();
             favourite.setUser(register);
             favourite.setAdvertiser(advertise.getAdvertiser());
@@ -83,6 +83,10 @@ public class Favouritescontrol {
             return favouritesRepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return favouritesRepo.thismonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return favouritesRepo.thismonth(userid);
+        } else if (Objects.equals(period, "Today")) {
+            return favouritesRepo.today(userid);
         }
         else{
             return favouritesRepo.yearlygraph(userid);

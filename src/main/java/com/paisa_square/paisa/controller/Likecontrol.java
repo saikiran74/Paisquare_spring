@@ -28,11 +28,11 @@ public class Likecontrol {
     public Likes like(@RequestBody Likes like,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception{
         Likes likeobj=null;
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
         if(advertismentmodel.isPresent() && registermodel.isPresent()){
             Advertise advertise=advertismentmodel.get();
             Register register =registermodel.get();
-            Optional<Register> AdvertiserInRegisterModel = registerRepo.findByUserId(userid);
+            Optional<Register> AdvertiserInRegisterModel = registerRepo.findById(userid);
             Register advertiserInRegister =AdvertiserInRegisterModel.get();
             like.setAdvertisement(advertise);
             like.setUser(register);
@@ -84,6 +84,8 @@ public class Likecontrol {
             return likerepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return likerepo.thismonth(userid);
+        } else if (Objects.equals(period, "Today")) {
+            return likerepo.today(userid);
         }
         else{
             return likerepo.yearlygraph(userid);

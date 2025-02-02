@@ -31,8 +31,8 @@ public class Blockedcontrol {
     private Advertiserepository adrepo;
     @PostMapping("/blockadvertiser/{userid}/{advertiserid}")
     public Blockedadvertiser block(@RequestBody Blockedadvertiser block, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
-        Optional<Register> advertisermodel = registerRepo.findByUserId(advertiserid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
+        Optional<Register> advertisermodel = registerRepo.findById(advertiserid);
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
@@ -76,7 +76,7 @@ public class Blockedcontrol {
     }
     @GetMapping("/getUserBlockedAdvertisementsList/{userid}")
     public List<Advertise> getUserBlockedAdvertisementsList(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
         if (registermodel.isPresent()) {
             return adrepo.findAdvertiseByUserBlocked(userid);
         } else {

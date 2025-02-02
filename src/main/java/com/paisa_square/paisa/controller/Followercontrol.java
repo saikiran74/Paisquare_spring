@@ -29,7 +29,7 @@ public class Followercontrol {
     public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = Registerrepo.findByUserId(userid);
         Optional<Register> advertisermodel = Registerrepo.findByUserId(advertiserid);
-        if (registermodel.isPresent()) {
+        if (registermodel.isPresent() && advertisermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
             follow.setAdvertiser(advertiser);
@@ -47,23 +47,26 @@ public class Followercontrol {
                 advertiser.getFollowers().add(userid);
             }
             Registerrepo.save(register);
-        }
-        Optional<Followers> followersmodel = followersrepo.findByAdvertiserIdAndUserId(advertiserid, userid);
-        if (followersmodel.isPresent()) {
-            Followers followersobj = followersmodel.get();
-            if(followersobj.isFollowing()){
-                followersobj.setFollowing(false);
-                followersobj.setLastupdate(new Date());
-                followersrepo.save(followersobj);
+            Optional<Followers> followersmodel = followersrepo.findByAdvertiserIdAndUserId(advertisermodel.get().getId(),registermodel.get().getId());
+            System.out.println("advertiserid"+advertiserid);
+            System.out.println("userid"+userid);
+            if (followersmodel.isPresent()) {
+                Followers followersobj = followersmodel.get();
+                if(followersobj.isFollowing()){
+                    followersobj.setFollowing(false);
+                    followersobj.setLastupdate(new Date());
+                    followersrepo.save(followersobj);
+                }
+                else{
+                    followersobj.setFollowing(true);
+                    followersobj.setLastupdate(new Date());
+                    followersrepo.save(followersobj);
+                }
             }
-            else{
-                followersobj.setFollowing(true);
-                followersobj.setLastupdate(new Date());
-                followersrepo.save(followersobj);
-            }
+            else
+                followersrepo.save(follow);
+
         }
-        else
-            followersrepo.save(follow);
         return follow;
     }
     @GetMapping("/followersgraph/{userid}/{period}")
@@ -74,6 +77,8 @@ public class Followercontrol {
             return followersrepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return followersrepo.thismonth(userid);
+        }  else if (Objects.equals(period, "Today")) {
+            return followersrepo.today(userid);
         }
         else{
             return followersrepo.yearlygraph(userid);
@@ -82,7 +87,7 @@ public class Followercontrol {
     @GetMapping("/getfollowingadvertisementslist/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = Registerrepo.findByUserId(userid);
+        Optional<Register> registermodel = Registerrepo.findById(userid);
         if (registermodel.isPresent()) {
            return adrepo.findAdvertiseByUserFollowing(userid);
         } else {

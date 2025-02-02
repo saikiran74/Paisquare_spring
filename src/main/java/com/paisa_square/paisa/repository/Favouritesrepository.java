@@ -32,6 +32,13 @@ public interface Favouritesrepository extends JpaRepository<Favourites,Long> {
             "GROUP BY day(a.lastupdate) " +
             "ORDER BY day(a.lastupdate)")
     List<Object[]> lastmonth(@Param("id") Long id);
+    @Query("SELECT concat(day(a.lastupdate),'th') AS date, COUNT(a) AS count " +
+            "FROM Favourites a " +
+            "WHERE a.advertiser.id = :id AND a.favourites=true AND " +
+            "DATE_FORMAT(CURDATE(), '%d')=DATE_FORMAT(a.lastupdate, '%d')" +
+            "GROUP BY day(a.lastupdate) " +
+            "ORDER BY day(a.lastupdate)")
+    List<Object[]> today(@Param("id") Long id);
 
     Optional<Favourites> findByAdvertisementIdAndUserIdAndAdvertiserId(Long advertisementId, Long userId, Long advertiserId);
 

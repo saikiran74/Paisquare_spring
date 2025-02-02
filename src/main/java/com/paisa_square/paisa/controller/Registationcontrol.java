@@ -1,10 +1,11 @@
 package com.paisa_square.paisa.controller;
-
 import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.RoleRepository;
 import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.service.Registerservice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "https://paisquare.com")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Registationcontrol {
     @Autowired
     private Registerservice registerService;
@@ -35,15 +36,17 @@ public class Registationcontrol {
     @Autowired
     private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final Logger logger = LoggerFactory.getLogger(Registationcontrol.class);
 
     @GetMapping("/")
-    @CrossOrigin(origins = "https://paisquare.com")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public String home() {
         return "Welcome to PaiSquare API!";
     }
     @PostMapping("/registeruser")
-    @CrossOrigin(origins = "https://paisquare.com")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
+
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
@@ -96,7 +99,7 @@ public class Registationcontrol {
         }
     }
     @PostMapping("/verifyOTP")
-    @CrossOrigin(origins = "https://paisquare.com")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<?> verifyOtp(@RequestBody User request) {
         boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
         if (isVerified) {
@@ -108,7 +111,7 @@ public class Registationcontrol {
     }
 
     @PostMapping("/login")
-    @CrossOrigin(origins = "https://paisquare.com")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPassword=login.getPassword();
@@ -148,7 +151,7 @@ public class Registationcontrol {
 
     @GetMapping("profile/{userid}")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
-        return registerRepo.findByUserId(userid);
+        return registerRepo.findById(userid);
     }
     @PostMapping("updateProfile/brandInformation/{userid}")
     public Register brandInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
