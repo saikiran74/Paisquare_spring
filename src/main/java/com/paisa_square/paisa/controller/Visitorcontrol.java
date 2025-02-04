@@ -73,13 +73,11 @@ public class Visitorcontrol {
 
     @GetMapping("/visitorgraph/{userid}/{period}")
     public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
-        System.out.println("period"+period);
         if(Objects.equals(period, "weekly")){
             return visitorrepo.weeklygraph(userid);
         } else if (Objects.equals(period, "lastmonth")) {
             return visitorrepo.lastmonth(userid);
         } else if (Objects.equals(period, "Today")) {
-            System.out.println("visitorrepo.today(userid) "+visitorrepo.today(userid));
             return visitorrepo.today(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return visitorrepo.thismonth(userid);
