@@ -52,7 +52,6 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable) // Disable form login
                 .logout(LogoutConfigurer::permitAll)
                 .addFilterBefore(customJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Use the custom bean
-        System.out.println("In securityFilterChain");
         return http.build();
     }
 
@@ -61,7 +60,7 @@ public class SecurityConfig {
     public UrlBasedCorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("http://localhost:4200","https://paisquare.com"));
+        config.setAllowedOrigins(Arrays.asList("https://paisquare.com"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
