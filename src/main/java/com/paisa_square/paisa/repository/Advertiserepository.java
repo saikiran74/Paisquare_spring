@@ -15,7 +15,7 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
     List<Advertise> findByadvertiserId(Integer userid);
 
     @Query(value = "SELECT * FROM Advertise r WHERE r.id = :advertisementid", nativeQuery = true)
-    Advertise findByadvertisementId(Integer advertisementid);
+    List<Advertise> findByadvertisementId(Integer advertisementid);
 
     List<Advertise> findAllBylikes(Integer userid);
 

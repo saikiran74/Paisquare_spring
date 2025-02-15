@@ -8,6 +8,7 @@ import com.paisa_square.paisa.repository.Advertisementtransactionrepository;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.service.Advertiseservice;
+import com.paisa_square.paisa.service.GoogleSitemapPingService;
 import com.paisa_square.paisa.service.Registerservice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +32,11 @@ public class Advertisecontrol {
     private Advertiseservice service;
     @Autowired
     private Advertisementtransactionrepository adtransRepo;
+
+    @Autowired
+    private GoogleSitemapPingService googleSitemapPingService;
+    @Autowired
+    private SitemapController sitemapController;
     @Autowired
     private Advertiserepository adrepo;
     @GetMapping("/advertisements")
@@ -38,7 +44,7 @@ public class Advertisecontrol {
         return service.findAlladvertisement();
     }
     @GetMapping("/idadvertisements/{advertisementid}")
-    public Advertise getIDAdvertisements(@PathVariable("advertisementid") Integer advertisementid) {
+    public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Integer advertisementid) {
         return adrepo.findByadvertisementId(advertisementid);
     }
     @GetMapping("/useradvertisements/{userid}")
@@ -73,6 +79,7 @@ public class Advertisecontrol {
                     ad.setAvailablepaisa(ad.getPaisa());
                     ad.setHashtags(ad.getHashtags());
                     ad.setPincodes(ad.getPincodes());
+                    ad.setSlug(ad.getSlug());
                     registerRepo.save(register);
                     trans=service.savead(ad);
                     Advertisementtransaction transaction=new Advertisementtransaction();
@@ -90,6 +97,7 @@ public class Advertisecontrol {
         else {
             throw new IllegalArgumentException("userId not found with id: " + userid);
         }
+        sitemapController.getSitemap();
         return ad;
     }
 
@@ -131,6 +139,9 @@ public class Advertisecontrol {
 
     @GetMapping("/getpincodesadvertisement/{query}")
     public List<Advertise> getPinCodesAdvertisement(@PathVariable("query") String query) {
+        if (Objects.equals(query, "all")) {
+            return service.findAlladvertisement();
+        }
         return service.getPinCodesAdvertisement(query);
     }
 }

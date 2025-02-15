@@ -46,7 +46,7 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF if necessary
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/login", "/registeruser", "/verifyOTP", "/advertisements", "/**").permitAll() // Allow access to public endpoints
+                        .requestMatchers("/login", "/registeruser", "/verifyOTP", "/advertisements", "/idadvertisements/**").permitAll() // Allow access to public endpoints
                         .anyRequest().authenticated() // Require authentication for other endpoints
                 )
                 .formLogin(AbstractHttpConfigurer::disable) // Disable form login

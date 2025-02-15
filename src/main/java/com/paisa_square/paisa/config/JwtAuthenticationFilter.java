@@ -34,6 +34,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         String token = getJwtFromRequest(request);
+        String path = request.getRequestURI();
+        // Skip JWT filter for public endpoints
+        if (path.startsWith("/login") || path.startsWith("/registeruser") ||
+                path.startsWith("/verifyOTP") || path.startsWith("/advertisements") ||
+                path.startsWith("/idadvertisements")) {
+            chain.doFilter(request, response);
+            return;
+        }
         if (token == null || token.trim().isEmpty() || "undefined".equals(token)) {
             System.out.println("Token is undefined or missing. User needs to log in.");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

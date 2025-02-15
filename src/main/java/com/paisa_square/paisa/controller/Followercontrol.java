@@ -28,7 +28,7 @@ public class Followercontrol {
     @PostMapping("/follow/{userid}/{advertiserid}")
     public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = Registerrepo.findByUserId(userid);
-        Optional<Register> advertisermodel = Registerrepo.findByUserId(advertiserid);
+        Optional<Register> advertisermodel = Registerrepo.findById(advertiserid);
         if (registermodel.isPresent() && advertisermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
