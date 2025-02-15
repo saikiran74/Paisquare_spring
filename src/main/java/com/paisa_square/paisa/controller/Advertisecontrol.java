@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static java.math.BigDecimal.valueOf;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Advertisecontrol {
     @Autowired
     private Registerservice registerservice;
@@ -43,14 +43,11 @@ public class Advertisecontrol {
     }
     @GetMapping("/useradvertisements/{userid}")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
-        System.out.println("userid"+userid);
         return service.findAllByadvertiserId(userid);
     }
 
     @PostMapping("/advertise/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Advertise advertise(@RequestBody Advertise ad,@PathVariable("userid") Long userid) throws Exception {
-        System.out.println("Saving ad form");
         Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Advertise trans=null;
         if (registermodel.isPresent()) {
@@ -69,7 +66,6 @@ public class Advertisecontrol {
                 ad.setPaisaperclick(BigDecimal.ZERO);
             }
             if(register.getPai().compareTo(ad.getPai())>=0 || register.getPaisa().compareTo(ad.getPaisa())>=0){
-                    System.out.println("inside the here");
                     register.setPai(register.getPai().subtract(ad.getPai()));
                     register.setPaisa(register.getPaisa().subtract(ad.getPaisa()));
                     register.setNoOfAdvertisements(register.getNoOfAdvertisements()+1);
@@ -86,7 +82,6 @@ public class Advertisecontrol {
                     transaction.setAdvertisementpaisa(trans.getPaisa());
                     transaction.setAvailablepaisa(register.getPaisa());
                     transaction.setAvailablepai(register.getPai());
-                    System.out.println("trans table data--->"+transaction);
                     adtransRepo.save(transaction);
                 }
             else

@@ -30,7 +30,7 @@ public class Register {
     private Integer countryCode=91;
     private String mobileNumber;
     private String brandLocation;
-    private BigDecimal pai= BigDecimal.valueOf(500.00);
+    private BigDecimal pai= BigDecimal.valueOf(1000.00);
     private BigDecimal paisa= BigDecimal.valueOf(0);
     @CreationTimestamp
     private Date opendate;

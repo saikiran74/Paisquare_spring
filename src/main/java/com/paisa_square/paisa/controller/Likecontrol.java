@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Likecontrol {
     @Autowired
     private Registerrepository registerRepo;
@@ -24,22 +25,20 @@ public class Likecontrol {
     @Autowired
     private Likerepository likerepo;
     @PostMapping("/like/{userid}/{advertisementid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Likes like(@RequestBody Likes like,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception{
         Likes likeobj=null;
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
         if(advertismentmodel.isPresent() && registermodel.isPresent()){
             Advertise advertise=advertismentmodel.get();
             Register register =registermodel.get();
-            Optional<Register> AdvertiserInRegisterModel = registerRepo.findByUserId(userid);
+            Optional<Register> AdvertiserInRegisterModel = registerRepo.findById(userid);
             Register advertiserInRegister =AdvertiserInRegisterModel.get();
             like.setAdvertisement(advertise);
             like.setUser(register);
             like.setAdvertiser(advertise.getAdvertiser());
             //Updating advertise_likes
             if(advertise.getLikes().contains(userid)) {
-                System.out.println("Already user like this"+advertisementid);
                 advertise.getLikes().remove(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()-1);
@@ -48,7 +47,6 @@ public class Likecontrol {
                 adrepo.save(advertise);
             }
             else{
-                System.out.println("user not liked this"+advertisementid);
                 advertise.getLikes().add(userid);
                 //updating advertise like count
                 advertise.setLikescount(advertise.getLikescount()+1);
@@ -79,7 +77,6 @@ public class Likecontrol {
         return likeobj;
     }
     @GetMapping("/likesgraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> likegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return likerepo.weeklygraph(userid);
@@ -87,6 +84,8 @@ public class Likecontrol {
             return likerepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return likerepo.thismonth(userid);
+        } else if (Objects.equals(period, "Today")) {
+            return likerepo.today(userid);
         }
         else{
             return likerepo.yearlygraph(userid);

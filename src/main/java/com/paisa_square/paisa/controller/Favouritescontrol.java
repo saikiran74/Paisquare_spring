@@ -16,6 +16,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Favouritescontrol {
     @Autowired
     private Favouritesrepository favouritesRepo;
@@ -27,35 +28,31 @@ public class Favouritescontrol {
     private Advertiserepository adrepo;
 
     @PostMapping("/addAdvetisementToFavourite/{userid}/{advertisementid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerrepo.findByUserId(userid);
+        Optional<Register> registermodel = registerrepo.findById(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
 
         if (registermodel.isPresent() && advertisemodel.isPresent()) {
             Register register = registermodel.get();
             Advertise advertise=advertisemodel.get();
-            Optional<Register> AdvertiserInregisterModel=registerrepo.findByUserId(advertise.getAdvertiser().getId());
+            Optional<Register> AdvertiserInregisterModel=registerrepo.findById(advertise.getAdvertiser().getId());
             Register AdvertiserInregister =AdvertiserInregisterModel.get();
             favourite.setUser(register);
             favourite.setAdvertiser(advertise.getAdvertiser());
             favourite.setAdvertisement(advertise);
             if(advertise.getFavourites().contains(userid)){
-                System.out.println("advertisementid exist in the register saved removing..");
                 advertise.getFavourites().remove(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()-1);
                 registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
             else{
-                System.out.println("advertiserid not  exist saving the register saved adding..");
                 advertise.getFavourites().add(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()+1);
                 registerrepo.save(AdvertiserInregister);
                 registerrepo.save(register);
             }
         }
-        System.out.println("addAdvetisementToFavourite->advertisment id not exits"+userid);
         Advertise advertise2=advertisemodel.get();
         Optional<Favourites> favouritesModel = favouritesRepo.findByAdvertisementIdAndUserIdAndAdvertiserId(advertisementid, userid,advertise2.getAdvertiser().getId());
         if (favouritesModel.isPresent()) {
@@ -78,8 +75,7 @@ public class Favouritescontrol {
         return favourite;
     }
 
-    @GetMapping("/{period}/favouritegraph/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
+    @GetMapping("/favouritegraph/{userid}/{period}")
     public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return favouritesRepo.weeklygraph(userid);
@@ -87,13 +83,16 @@ public class Favouritescontrol {
             return favouritesRepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return favouritesRepo.thismonth(userid);
+        } else if (Objects.equals(period, "thismonth")) {
+            return favouritesRepo.thismonth(userid);
+        } else if (Objects.equals(period, "Today")) {
+            return favouritesRepo.today(userid);
         }
         else{
             return favouritesRepo.yearlygraph(userid);
         }
     }
     @GetMapping("/getfavouriteadvertisementslist/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
         return adrepo.findByfavourites(userid);
     }

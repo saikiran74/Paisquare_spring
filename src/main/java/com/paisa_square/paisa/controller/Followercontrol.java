@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Followercontrol {
     @Autowired
     private Followerservice service;
@@ -26,53 +26,50 @@ public class Followercontrol {
     private Advertiserepository adrepo;
 
     @PostMapping("/follow/{userid}/{advertiserid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Followers comment(@RequestBody Followers follow, @PathVariable("advertiserid") Long advertiserid,@PathVariable("userid") Long userid) throws Exception {
         Optional<Register> registermodel = Registerrepo.findByUserId(userid);
         Optional<Register> advertisermodel = Registerrepo.findByUserId(advertiserid);
-        if (registermodel.isPresent()) {
+        if (registermodel.isPresent() && advertisermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
             follow.setAdvertiser(advertiser);
             follow.setUser(register);
             if(register.getFollowing().contains(advertiserid)){
                 register.getFollowing().remove(advertiserid);
-                System.out.println("User present in following list removing it");
             }
             else{
-                System.out.println("User present not in following list adding it");
                 register.getFollowing().add(advertiserid);
             }
             if(advertiser.getFollowers().contains(userid)){
-                System.out.println("User present in follower list removing it");
                 advertiser.getFollowers().remove(userid);
             }
             else{
-                System.out.println("User present not in follower list adding it");
                 advertiser.getFollowers().add(userid);
             }
             Registerrepo.save(register);
-        }
-        Optional<Followers> followersmodel = followersrepo.findByAdvertiserIdAndUserId(advertiserid, userid);
-        if (followersmodel.isPresent()) {
-            Followers followersobj = followersmodel.get();
-            if(followersobj.isFollowing()){
-                followersobj.setFollowing(false);
-                followersobj.setLastupdate(new Date());
-                followersrepo.save(followersobj);
+            Optional<Followers> followersmodel = followersrepo.findByAdvertiserIdAndUserId(advertisermodel.get().getId(),registermodel.get().getId());
+            System.out.println("advertiserid"+advertiserid);
+            System.out.println("userid"+userid);
+            if (followersmodel.isPresent()) {
+                Followers followersobj = followersmodel.get();
+                if(followersobj.isFollowing()){
+                    followersobj.setFollowing(false);
+                    followersobj.setLastupdate(new Date());
+                    followersrepo.save(followersobj);
+                }
+                else{
+                    followersobj.setFollowing(true);
+                    followersobj.setLastupdate(new Date());
+                    followersrepo.save(followersobj);
+                }
             }
-            else{
-                followersobj.setFollowing(true);
-                followersobj.setLastupdate(new Date());
-                followersrepo.save(followersobj);
-            }
+            else
+                followersrepo.save(follow);
+
         }
-        else
-            followersrepo.save(follow);
         return follow;
     }
     @GetMapping("/followersgraph/{userid}/{period}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public List<Object[]> followersgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
         if(Objects.equals(period, "weekly")){
             return followersrepo.weeklygraph(userid);
@@ -80,6 +77,8 @@ public class Followercontrol {
             return followersrepo.lastmonth(userid);
         } else if (Objects.equals(period, "thismonth")) {
             return followersrepo.thismonth(userid);
+        }  else if (Objects.equals(period, "Today")) {
+            return followersrepo.today(userid);
         }
         else{
             return followersrepo.yearlygraph(userid);
@@ -88,7 +87,7 @@ public class Followercontrol {
     @GetMapping("/getfollowingadvertisementslist/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = Registerrepo.findByUserId(userid);
+        Optional<Register> registermodel = Registerrepo.findById(userid);
         if (registermodel.isPresent()) {
            return adrepo.findAdvertiseByUserFollowing(userid);
         } else {

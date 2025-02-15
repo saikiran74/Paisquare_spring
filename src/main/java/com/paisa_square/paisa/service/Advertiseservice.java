@@ -23,7 +23,6 @@ public class Advertiseservice {
         return adrepo.save(ad);
     }
     public List<Advertise> findAlladvertisement(){
-        System.out.println("In findAlladvertisement"+adrepo.findAll());
         return adrepo.findAll();
     }
     public List<Comments> findByadvertisementid(Integer advertisementid){
@@ -38,11 +37,9 @@ public class Advertiseservice {
     }
 
     public List<Advertise> getHashTagsAdvertisement(String hashtag) {
-        //System.out.println("IN adrepo.getHashTagsAdvertisement(query) --> "+adrepo.getHashTagsAdvertisement(hashtag));
         return adrepo.getHashTagsAdvertisement(hashtag);
     }
     public List<Advertise> getPinCodesAdvertisement(String pincodes) {
-        //System.out.println("IN adrepo.getPinCodesAdvertisement(query) --> "+adrepo.getPinCodesAdvertisement(pincodes));
         return adrepo.getPinCodesAdvertisement(pincodes);
     }
 }

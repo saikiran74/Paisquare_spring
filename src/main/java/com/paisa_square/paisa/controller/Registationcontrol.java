@@ -1,10 +1,11 @@
 package com.paisa_square.paisa.controller;
-
 import com.paisa_square.paisa.model.*;
 import com.paisa_square.paisa.repository.Registerrepository;
 import com.paisa_square.paisa.repository.RoleRepository;
 import com.paisa_square.paisa.repository.UserRepository;
 import com.paisa_square.paisa.service.Registerservice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200/")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Registationcontrol {
     @Autowired
     private Registerservice registerService;
@@ -35,10 +36,17 @@ public class Registationcontrol {
     @Autowired
     private UserRepository userRepo;
     private BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private static final Logger logger = LoggerFactory.getLogger(Registationcontrol.class);
+
+    @GetMapping("/")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
+    public String home() {
+        return "Welcome to PaiSquare API!";
+    }
     @PostMapping("/registeruser")
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<ApiMessage> registerUser(@RequestBody User user) throws Exception {
-        System.out.println("in register control");
+
         String tempEmailId = user.getEmail();
         String hashedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(hashedPassword);
@@ -51,7 +59,6 @@ public class Registationcontrol {
             User existingUser = userRepo.findByEmail(tempEmailId);
             if (existingUser != null) {
                 if (Objects.equals(existingUser.getEmailOTP(), "Verified")) {
-                    System.out.println("email id is exist");
                     return ResponseEntity.ok(new ApiMessage("error", "emailExists", "Email ID already exists"));
                 } else {
                     existingUser.setAccountType(user.getAccountType());
@@ -73,14 +80,13 @@ public class Registationcontrol {
                     registerUser.setEmail(user.getEmail());
                     registerUser.setPincode(user.getPincode());
                     registerUser.setAccountType(user.getAccountType());
-                    registerUser.setPai(new BigDecimal(500));
+                    registerUser.setPai(new BigDecimal(1000));
                     registerUser.setPaisa(new BigDecimal(0));
                     registerService.saveUserInRegister(registerUser);
                 }
                 return statusMessageLogMethod(saveUserInUser);
             }
         }
-        System.out.println("Issue while creating account!");
         return ResponseEntity.ok(new ApiMessage("error","issueInCreating", "Issue while creating account"));
     }
     public ResponseEntity<ApiMessage> statusMessageLogMethod(String savingUserStatus) {
@@ -93,8 +99,8 @@ public class Registationcontrol {
         }
     }
     @PostMapping("/verifyOTP")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<?> verifyOtp(@RequestBody User request) {
-        System.out.println("In verifyOTP page"+request.getEmail()+ request.getEmailOTP());
         boolean isVerified = registerService.verifyOtp(request.getEmail(), request.getEmailOTP());
         if (isVerified) {
             //return ResponseEntity.status(400).body(new ApiMessage("success", "OTP verified."));
@@ -105,7 +111,7 @@ public class Registationcontrol {
     }
 
     @PostMapping("/login")
-    @CrossOrigin(origins = "http://localhost:4200/")
+    @CrossOrigin(origins = "${cors.allowedOrigins}")
     public ResponseEntity<Map<String, Object>> loginUser(@RequestBody User login) throws Exception {
         String tempEmailId=login.getEmail();
         String tempPassword=login.getPassword();
@@ -115,7 +121,6 @@ public class Registationcontrol {
             ApiMessage apiMessage;
             User user = null;
             loginStatus=registerService.fetchUserByEmailIdAndPassword(tempEmailId,tempPassword);
-            System.out.println("loginStatus -->"+ loginStatus);
             if (Objects.equals(loginStatus, "validUser")) {
                 apiMessage = new ApiMessage("success", "validUser", "Login success.");
                 user = userRepo.findByEmail(tempEmailId);
@@ -128,7 +133,6 @@ public class Registationcontrol {
             } else {
                 apiMessage = new ApiMessage("error", "unKnown", "Please check email and password.");
             }
-            System.out.println("apiMessage -->"+apiMessage);
             if(user!=null){
                 String token = jwtUtil.generateToken(user.getEmail());
                 response.put("token",token);
@@ -146,9 +150,8 @@ public class Registationcontrol {
     }
 
     @GetMapping("profile/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
-        return registerRepo.findByUserId(userid);
+        return registerRepo.findById(userid);
     }
     @PostMapping("updateProfile/brandInformation/{userid}")
     public Register brandInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
@@ -231,14 +234,12 @@ public class Registationcontrol {
         return userprofileobj;
     }
     @GetMapping("userdata/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public Optional<Register> findUserProfile(@PathVariable("userid") Long userId){
         return registerRepo.findByUserId(userId);
     }
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     @PostMapping("updateProfile/upload-image/{id}")
     public ResponseEntity<String> uploadProfileImage(@PathVariable Long id, @RequestParam("image") MultipartFile image) {
-        System.out.println("uploadProfileImage");
         try {
             if (image.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -261,11 +262,8 @@ public class Registationcontrol {
 
     @GetMapping("updateProfile/profile-image/{id}")
     public ResponseEntity<byte[]> getProfileImage(@PathVariable Long id) {
-        System.out.println("getProfileImage");
         byte[] image = registerService.getProfileImage(id);
-        System.out.println("Image-->" +ResponseEntity.ok()
-                .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
-                .body(image));
+
         if (image != null) {
             return ResponseEntity.ok()
                     .contentType(MediaType.IMAGE_PNG) // or IMAGE_JPEG based on the image type
@@ -276,7 +274,6 @@ public class Registationcontrol {
     }
     @PostMapping("/rating/{userid}/{advertiserid}")
     public Optional<Register> rating(@RequestBody Profilerating rating, @PathVariable("userid") Long userid, @PathVariable("advertiserid") Long advertiserid) throws Exception{
-        System.out.println("In rating control "+rating);
         registerService.saveRating(rating,userid,advertiserid);
         return registerRepo.findByUserId(userid);
     }

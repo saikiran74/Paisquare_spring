@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = "${cors.allowedOrigins}")
 public class Blockedcontrol {
     @Autowired
     private Followerservice service;
@@ -30,22 +30,19 @@ public class Blockedcontrol {
     @Autowired
     private Advertiserepository adrepo;
     @PostMapping("/blockadvertiser/{userid}/{advertiserid}")
-    @CrossOrigin(origins = "http://localhost:4200/")
     public Blockedadvertiser block(@RequestBody Blockedadvertiser block, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
-        Optional<Register> advertisermodel = registerRepo.findByUserId(advertiserid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
+        Optional<Register> advertisermodel = registerRepo.findById(advertiserid);
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
             Register advertiser = advertisermodel.get();
             block.setAdvertiser(advertiser);
             block.setUser(register);
             if(register.getBlocked().contains(advertiserid)){
-                System.out.println("advertiserid exist in the register  blocked removing.");
                 register.getBlocked().remove(advertiserid);
                 registerRepo.save(register);
             }
             else{
-                System.out.println("advertiserid not  exist saving the register blocked adding");
                 register.getBlocked().add(advertiserid);
                 registerRepo.save(register);
             }
@@ -66,7 +63,6 @@ public class Blockedcontrol {
         }
         else
             blockedrepo.save(block);
-        System.out.println("blockadvertiser->advertisment id not exits"+userid);
         return block;
     }
     @GetMapping("/UserBlockedProfiles/{userid}")
@@ -79,9 +75,8 @@ public class Blockedcontrol {
         }
     }
     @GetMapping("/getUserBlockedAdvertisementsList/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getUserBlockedAdvertisementsList(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = registerRepo.findByUserId(userid);
+        Optional<Register> registermodel = registerRepo.findById(userid);
         if (registermodel.isPresent()) {
             return adrepo.findAdvertiseByUserBlocked(userid);
         } else {

@@ -10,7 +10,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
+import java.text.Normalizer;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -63,6 +67,31 @@ public class Advertise {
     private Date opendate;
     @UpdateTimestamp
     private Date lastupdate;
+    private String slug;
+
+    public void generateSlug() {
+        if (this.slug == null || this.slug.isEmpty()) {
+            // List of common stop words to ignore
+            List<String> stopWords = Arrays.asList("the", "is", "and", "your", "to", "for", "with", "on", "of", "a", "in", "by", "this", "an");
+
+            // Convert description to lowercase and split into words
+            String[] words = description.toLowerCase().split("\\s+");
+
+            // Filter out stop words and limit to 6 keywords
+            String slugBase = Arrays.stream(words)
+                    .filter(word -> !stopWords.contains(word))
+                    .limit(6)  // Keep only 6 meaningful words
+                    .collect(Collectors.joining("-")); // Join with "-"
+
+            // Normalize and remove special characters
+            slugBase = Normalizer.normalize(slugBase, Normalizer.Form.NFD);
+            slugBase = slugBase.replaceAll("[^a-z0-9-]", "");
+
+            // Ensure uniqueness by appending ID
+            this.slug = slugBase;
+        }
+    }
+
 
     public void setAdvertiser(Register advertiser) {
         this.advertiser = advertiser;

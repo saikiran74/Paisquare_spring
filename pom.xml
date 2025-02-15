@@ -14,10 +14,11 @@
 	<name>paisa</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>17</java.version>
-		<maven.compiler.source>20</maven.compiler.source> <!-- or 17, 11 -->
-		<maven.compiler.target>20</maven.compiler.target> <!-- or 17, 11 -->
+		<java.version>20</java.version>
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -94,7 +95,17 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.11.0</version>
+				<configuration>
+					<source>20</source> <!-- Set to Java 21 -->
+					<target>20</target> <!-- Set to Java 21 -->
+				</configuration>
+			</plugin>
 		</plugins>
+
 	</build>
 
 </project>

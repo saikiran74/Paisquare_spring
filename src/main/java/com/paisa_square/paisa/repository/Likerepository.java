@@ -32,6 +32,14 @@ public interface Likerepository extends JpaRepository<Likes,Long> {
             "GROUP BY day(a.lastupdate) " +
             "ORDER BY day(a.lastupdate)")
     List<Object[]> lastmonth(@Param("id") Long id);
+
+    @Query("SELECT concat(day(f.lastupdate),'th') AS date, COUNT(f) AS count " +
+            "FROM Likes f " +
+            "WHERE f.advertiser.id = :id AND f.liked=true AND " +
+            "DATE_FORMAT(CURDATE(), '%d')=DATE_FORMAT(f.lastupdate, '%d')" +
+            "GROUP BY day(f.lastupdate) " +
+            "ORDER BY day(f.lastupdate)")
+    List<Object[]> today(@Param("id") Long id);
     @Query("SELECT l FROM Likes l WHERE l.advertiser.id = :advertiserId AND l.liked=true ORDER BY l.lastupdate")
     List<Likes> findAllByAdvertiserId(@Param("advertiserId") Long advertiserId);
     Optional<Likes> findByAdvertisementIdAndUserIdAndAdvertiserId(Long advertisementId, Long userId, Long advertiserId);
