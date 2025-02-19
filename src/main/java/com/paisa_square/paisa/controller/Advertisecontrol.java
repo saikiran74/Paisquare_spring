@@ -79,7 +79,6 @@ public class Advertisecontrol {
                     ad.setAvailablepaisa(ad.getPaisa());
                     ad.setHashtags(ad.getHashtags());
                     ad.setPincodes(ad.getPincodes());
-                    ad.setSlug(ad.getSlug());
                     registerRepo.save(register);
                     trans=service.savead(ad);
                     Advertisementtransaction transaction=new Advertisementtransaction();
