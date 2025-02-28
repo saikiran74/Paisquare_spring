@@ -76,8 +76,6 @@ public class SitemapController {
             FileWriter writer = new FileWriter(file);
             writer.write(sitemap);
             writer.close();
-
-            System.out.println("Sitemap saved at: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
