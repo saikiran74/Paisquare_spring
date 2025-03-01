@@ -47,10 +47,9 @@ public class Advertisecontrol {
     public List<Advertise> getIDAdvertisements(@PathVariable("advertisementid") Integer advertisementid) {
         return adrepo.findByadvertisementId(advertisementid);
     }
-    @GetMapping("/advertisementsEditing/{advertisementid}")
-    public Advertise findByadvertisementIdForEditing(@PathVariable("advertisementid") Integer advertisementid) {
-        System.out.println("ssdsds");
-        return adrepo.findByadvertisementIdForEditing(advertisementid);
+    @GetMapping("/singleadvertisement/{advertisementid}")
+    public Advertise singleadvertisement(@PathVariable("advertisementid") Integer advertisementid) {
+        return adrepo.singleadvertisement(advertisementid);
     }
     @GetMapping("/useradvertisements/{userid}")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {

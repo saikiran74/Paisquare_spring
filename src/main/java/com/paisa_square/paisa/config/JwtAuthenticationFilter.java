@@ -37,8 +37,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
         // Skip JWT filter for public endpoints
         if (path.startsWith("/login") || path.startsWith("/registeruser") ||
-                path.startsWith("/verifyOTP") || path.startsWith("/advertisements") ||
-                path.startsWith("/idadvertisements")) {
+                path.startsWith("/verifyOTP")  ||
+                path.startsWith("/advertisements") ||
+                path.startsWith("/getHashTags") ||
+                path.startsWith("/getHashTagsAdvertisement") ||
+                path.startsWith("/idadvertisements") ||
+                path.startsWith("/contactus")) {
             chain.doFilter(request, response);
             return;
         }
@@ -56,12 +60,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                                 userDetails, null, null);
                         SecurityContextHolder.getContext().setAuthentication(authentication);
+                    } else{
+                        logger.error("userDetails is null");
+
                     }
                 }
             } catch (DecodingException e) {
                 logger.error("JWT decoding error: Invalid base64 encoding");
             } catch (Exception e) {
-                logger.error("An error occurred during JWT validation");
+                logger.error("An error occurred during JWT validation",e);
             }
         }
         chain.doFilter(request, response);

@@ -18,7 +18,7 @@ public interface Advertiserepository extends JpaRepository<Advertise,Long> {
     List<Advertise> findByadvertisementId(@Param("advertisementid") Integer advertisementid);
 
     @Query("SELECT a FROM Advertise a WHERE a.id = :advertisementid")
-    Advertise findByadvertisementIdForEditing(@Param("advertisementid") Integer advertisementid);
+    Advertise singleadvertisement(@Param("advertisementid") Integer advertisementid);
 
 
 

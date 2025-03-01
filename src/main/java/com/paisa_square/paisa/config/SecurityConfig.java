@@ -46,12 +46,16 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable) // Disable CSRF if necessary
                 .authorizeHttpRequests(authz -> authz
-                        .requestMatchers("/login", "/registeruser", "/verifyOTP", "/advertisements","/sitemap.xml", "/robots.txt", "/idadvertisements/**").permitAll() // Allow access to public endpoints
+                        .requestMatchers("/login", "/registeruser", "/verifyOTP",
+                                "/advertisements","/sitemap.xml", "/robots.txt",
+                                "/idadvertisements/**","/contactus","/getHashTags",
+                                "/getHashTagsAdvertisement/**").permitAll() // Allow access to public endpoints
                         .anyRequest().authenticated() // Require authentication for other endpoints
                 )
                 .formLogin(AbstractHttpConfigurer::disable) // Disable form login
                 .logout(LogoutConfigurer::permitAll)
                 .addFilterBefore(customJwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Use the custom bean
+        System.out.println("token"+http);
         return http.build();
     }
 
