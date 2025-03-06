@@ -19,6 +19,6 @@ public class Followerservice {
         return repo.save(follower);
     }
     public Optional<Register> followerlist(Long userid){
-        return registerrepo.findById(userid);
+        return registerrepo.findByUserId(userid);
     }
 }

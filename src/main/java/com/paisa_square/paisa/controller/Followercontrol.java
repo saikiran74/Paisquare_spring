@@ -48,8 +48,6 @@ public class Followercontrol {
             }
             Registerrepo.save(register);
             Optional<Followers> followersmodel = followersrepo.findByAdvertiserIdAndUserId(advertisermodel.get().getId(),registermodel.get().getId());
-            System.out.println("advertiserid"+advertiserid);
-            System.out.println("userid"+userid);
             if (followersmodel.isPresent()) {
                 Followers followersobj = followersmodel.get();
                 if(followersobj.isFollowing()){
@@ -71,34 +69,36 @@ public class Followercontrol {
     }
     @GetMapping("/followersgraph/{userid}/{period}")
     public List<Object[]> followersgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        Long registerUserId=Registerrepo.findByUserId(userid).get().getId();
         if(Objects.equals(period, "weekly")){
-            return followersrepo.weeklygraph(userid);
+            return followersrepo.weeklygraph(registerUserId);
         } else if (Objects.equals(period, "lastmonth")) {
-            return followersrepo.lastmonth(userid);
+            return followersrepo.lastmonth(registerUserId);
         } else if (Objects.equals(period, "thismonth")) {
-            return followersrepo.thismonth(userid);
+            return followersrepo.thismonth(registerUserId);
         }  else if (Objects.equals(period, "Today")) {
-            return followersrepo.today(userid);
+            return followersrepo.today(registerUserId);
         }
         else{
-            return followersrepo.yearlygraph(userid);
+            return followersrepo.yearlygraph(registerUserId);
         }
     }
     @GetMapping("/getfollowingadvertisementslist/{userid}")
     @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getfollowingadvertisementslist(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = Registerrepo.findById(userid);
+        Optional<Register> registermodel = Registerrepo.findByUserId(userid);
         if (registermodel.isPresent()) {
-           return adrepo.findAdvertiseByUserFollowing(userid);
+
+           return adrepo.findAdvertiseByUserFollowing(registermodel.get().getId());
         } else {
             return Collections.emptyList();
         }
     }
     @GetMapping("/UserFollowingProfiles/{userid}")
     public List<Register> getUserFollowingProfiles(@PathVariable("userid") Long userid) {
-        List<Register> followersModel=Registerrepo.findAllProfilesUserFollowing(userid);
-        if (!followersModel.isEmpty()) {
-            return Registerrepo.findAllProfilesUserFollowing(userid);
+        Optional<Register> userModel=Registerrepo.findByUserId(userid);
+        if (!userModel.isEmpty()) {
+            return Registerrepo.findAllProfilesUserFollowing(userModel.get().getId());
         } else {
             return Collections.emptyList();
         }
