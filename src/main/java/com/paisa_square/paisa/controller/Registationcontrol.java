@@ -190,10 +190,11 @@ public class Registationcontrol {
         User userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
-            userprofileobj.setPassword(profile.getPassword());
+            String hashedPassword = passwordEncoder.encode(profile.getPassword());
+            userprofileobj.setPassword(hashedPassword);
             userRepo.save(userprofileobj);
         }
-        return userprofileobj;
+        return profile;
     }
 
 

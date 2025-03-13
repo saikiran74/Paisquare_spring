@@ -48,7 +48,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/login", "/registeruser", "/verifyOTP",
                                 "/advertisements","/sitemap.xml", "/robots.txt",
-                                "/idadvertisements/**","/contactus","/getHashTags",
+                                "/idadvertisements/**","/contactus","/getHashTags","/getpincodesadvertisement/**",
                                 "/getHashTagsAdvertisement/**").permitAll() // Allow access to public endpoints
                         .anyRequest().authenticated() // Require authentication for other endpoints
                 )

@@ -44,7 +44,6 @@ public class Registerservice {
         return registerRepository.save(user);
     }
     public String saveUser(User user) throws MessagingException {
-        System.out.println("saveUser in-----------");
         String otp=generateOtp();
         user.setEmailOTP(otp);
         String sendOtpEmailResponse=sendOtpEmail(user.getEmail(),otp,user.getUsername());
