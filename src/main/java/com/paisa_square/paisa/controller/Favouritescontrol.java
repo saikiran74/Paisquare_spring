@@ -21,21 +21,21 @@ public class Favouritescontrol {
     @Autowired
     private Favouritesrepository favouritesRepo;
     @Autowired
-    private Registerservice registerservice;
+    private Registerservice registerService;
     @Autowired
-    private Registerrepository registerrepo;
+    private Registerrepository registerRepo;
     @Autowired
     private Advertiserepository adrepo;
 
     @PostMapping("/addAdvetisementToFavourite/{userid}/{advertisementid}")
     public Favourites saveadvertisement(@RequestBody Favourites favourite, @PathVariable("advertisementid") Long advertisementid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerrepo.findById(userid);
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Optional<Advertise> advertisemodel= adrepo.findById(advertisementid);
 
         if (registermodel.isPresent() && advertisemodel.isPresent()) {
             Register register = registermodel.get();
             Advertise advertise=advertisemodel.get();
-            Optional<Register> AdvertiserInregisterModel=registerrepo.findById(advertise.getAdvertiser().getId());
+            Optional<Register> AdvertiserInregisterModel=registerRepo.findById(advertise.getAdvertiser().getId());
             Register AdvertiserInregister =AdvertiserInregisterModel.get();
             favourite.setUser(register);
             favourite.setAdvertiser(advertise.getAdvertiser());
@@ -43,14 +43,14 @@ public class Favouritescontrol {
             if(advertise.getFavourites().contains(userid)){
                 advertise.getFavourites().remove(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()-1);
-                registerrepo.save(AdvertiserInregister);
-                registerrepo.save(register);
+                registerRepo.save(AdvertiserInregister);
+                registerRepo.save(register);
             }
             else{
                 advertise.getFavourites().add(userid);
                 AdvertiserInregister.setNoOfSavedAds(AdvertiserInregister.getNoOfSavedAds()+1);
-                registerrepo.save(AdvertiserInregister);
-                registerrepo.save(register);
+                registerRepo.save(AdvertiserInregister);
+                registerRepo.save(register);
             }
         }
         Advertise advertise2=advertisemodel.get();
@@ -77,19 +77,20 @@ public class Favouritescontrol {
 
     @GetMapping("/favouritegraph/{userid}/{period}")
     public List<Object[]> favouritegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        Long registerUserid=registerRepo.findByUserId(userid).get().getId();
         if(Objects.equals(period, "weekly")){
-            return favouritesRepo.weeklygraph(userid);
+            return favouritesRepo.weeklygraph(registerUserid);
         } else if (Objects.equals(period, "lastmonth")) {
-            return favouritesRepo.lastmonth(userid);
+            return favouritesRepo.lastmonth(registerUserid);
         } else if (Objects.equals(period, "thismonth")) {
-            return favouritesRepo.thismonth(userid);
+            return favouritesRepo.thismonth(registerUserid);
         } else if (Objects.equals(period, "thismonth")) {
-            return favouritesRepo.thismonth(userid);
+            return favouritesRepo.thismonth(registerUserid);
         } else if (Objects.equals(period, "Today")) {
-            return favouritesRepo.today(userid);
+            return favouritesRepo.today(registerUserid);
         }
         else{
-            return favouritesRepo.yearlygraph(userid);
+            return favouritesRepo.yearlygraph(registerUserid);
         }
     }
     @GetMapping("/getfavouriteadvertisementslist/{userid}")

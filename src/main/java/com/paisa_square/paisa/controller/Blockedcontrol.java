@@ -31,7 +31,7 @@ public class Blockedcontrol {
     private Advertiserepository adrepo;
     @PostMapping("/blockadvertiser/{userid}/{advertiserid}")
     public Blockedadvertiser block(@RequestBody Blockedadvertiser block, @PathVariable("advertiserid") Long advertiserid, @PathVariable("userid") Long userid) throws Exception {
-        Optional<Register> registermodel = registerRepo.findById(userid);
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
         Optional<Register> advertisermodel = registerRepo.findById(advertiserid);
         if (registermodel.isPresent()) {
             Register register = registermodel.get();
@@ -67,18 +67,18 @@ public class Blockedcontrol {
     }
     @GetMapping("/UserBlockedProfiles/{userid}")
     public List<Register> getUserBlockedProfiles(@PathVariable("userid") Long userid) {
-        List<Register> BlockAdvertiserModel=registerRepo.findAllProfilesUserBlocker(userid);
-        if (!BlockAdvertiserModel.isEmpty()) {
-            return registerRepo.findAllProfilesUserBlocker(userid);
+        Optional<Register> registerModelUser = registerRepo.findByUserId(userid);
+        if (!registerModelUser.isEmpty()) {
+            return registerRepo.findAllProfilesUserBlocker(registerModelUser.get().getId());
         } else {
             return Collections.emptyList();
         }
     }
     @GetMapping("/getUserBlockedAdvertisementsList/{userid}")
     public List<Advertise> getUserBlockedAdvertisementsList(@PathVariable("userid") Long userid) {
-        Optional<Register> registermodel = registerRepo.findById(userid);
-        if (registermodel.isPresent()) {
-            return adrepo.findAdvertiseByUserBlocked(userid);
+        Optional<Register> registerModelUser = registerRepo.findByUserId(userid);
+        if (registerModelUser.isPresent()) {
+            return adrepo.findAdvertiseByUserBlocked(registerModelUser.get().getId());
         } else {
             return Collections.emptyList();
         }

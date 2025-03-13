@@ -68,7 +68,9 @@ public class Advertise {
     @UpdateTimestamp
     private Date lastupdate;
     private String slug;
-
+    /** Auto-generate slug before saving */
+    @PrePersist
+    @PreUpdate
     public void generateSlug() {
         if (this.slug == null || this.slug.isEmpty()) {
             // List of common stop words to ignore

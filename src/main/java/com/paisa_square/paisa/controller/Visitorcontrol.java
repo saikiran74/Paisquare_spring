@@ -37,7 +37,7 @@ public class Visitorcontrol {
         if (advertismentmodel.isPresent()) {
             Advertise advertise = advertismentmodel.get();
             Optional<Register> registermodel = registerRepo.findById(advertise.getAdvertiser().getId());
-            Optional<Register> registermodelOfUser = registerRepo.findById(userid);
+            Optional<Register> registermodelOfUser = registerRepo.findByUserId(userid);
             Register register = registermodel.get();
             Register registerOfUser = registermodelOfUser.get();
             //Saving data into register table
@@ -73,16 +73,17 @@ public class Visitorcontrol {
 
     @GetMapping("/visitorgraph/{userid}/{period}")
     public List<Object[]> visitorgraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        Long registerUserId=registerRepo.findByUserId(userid).get().getId();
         if(Objects.equals(period, "weekly")){
-            return visitorrepo.weeklygraph(userid);
+            return visitorrepo.weeklygraph(registerUserId);
         } else if (Objects.equals(period, "lastmonth")) {
-            return visitorrepo.lastmonth(userid);
+            return visitorrepo.lastmonth(registerUserId);
         } else if (Objects.equals(period, "Today")) {
-            return visitorrepo.today(userid);
+            return visitorrepo.today(registerUserId);
         } else if (Objects.equals(period, "thismonth")) {
-            return visitorrepo.thismonth(userid);
+            return visitorrepo.thismonth(registerUserId);
         }else{
-            return visitorrepo.yearlygraph(userid);
+            return visitorrepo.yearlygraph(registerUserId);
         }
     }
     @GetMapping("/getvisitedadvertisementslist/{userid}")

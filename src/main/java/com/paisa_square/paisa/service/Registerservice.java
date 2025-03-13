@@ -184,18 +184,18 @@ public class Registerservice {
         Optional<Register> registerModel = registerRepository.findByUserId(userid);
         Optional<Register> registerModelAdvertiser = registerRepository.findByUserId(advertiserid);
         Optional<Profilerating> ratingModel = profileratingrepo.findByUserIdAndAdvertiserId(userid, advertiserid);
-
         rating.setAdvertiser(registerModelAdvertiser.get());
         rating.setUser(registerModel.get());
-        if (ratingModel.isPresent() && registerModel.isPresent()) {
+        if (ratingModel.isPresent()) {
             // Update existing rating
-            Profilerating existingRating = ratingModel.get();
-            existingRating.setRating(rating.getRating());
+            BigDecimal existingRatingByUser=ratingModel.get().getRating();
+            Profilerating existingRatingModel = ratingModel.get();
+            existingRatingModel.setRating(rating.getRating());
 
-            profileratingrepo.save(existingRating);
+            profileratingrepo.save(existingRatingModel);
 
             // Update rating in Register
-            Register register = updateRatingInRegister(rating, registerModel.get());
+            Register register = updateRatingInRegister(false,existingRatingByUser, rating, registerModel.get());
             registerRepository.save(register);
 
         } else {
@@ -204,7 +204,7 @@ public class Registerservice {
 
             // If register model is present, update it
             registerModel.ifPresent(register -> {
-                Register updatedRegister = updateRatingInRegister(rating, register);
+                Register updatedRegister = updateRatingInRegister(true, BigDecimal.valueOf(0),rating, register);
                 registerRepository.save(updatedRegister);
             });
         }
@@ -212,27 +212,39 @@ public class Registerservice {
         return true;
     }
 
-    private Register updateRatingInRegister(Profilerating rating, Register register) {
+    private Register updateRatingInRegister(Boolean newUserRating, BigDecimal existingRatingByUser, Profilerating rating, Register register) {
         BigDecimal userExistingRating = register.getRating();
         int noOfUserRating = (int) register.getNoOfRating();
-
-        // Calculate new rating
         BigDecimal updatedRating;
+
         if (noOfUserRating > 0) {
             BigDecimal newRating = rating.getRating();
-            updatedRating = userExistingRating
-                    .multiply(BigDecimal.valueOf(noOfUserRating))
-                    .add(newRating)
-                    .divide(BigDecimal.valueOf(noOfUserRating + 1), RoundingMode.HALF_UP);
+
+            if (!newUserRating) {
+                // User is updating their rating: remove old rating first
+                // Get user's previous rating
+                updatedRating = userExistingRating
+                        .multiply(BigDecimal.valueOf(noOfUserRating)) // Convert rating to total sum
+                        .subtract(existingRatingByUser) // Remove old rating
+                        .add(newRating) // Add new rating
+                        .divide(BigDecimal.valueOf(noOfUserRating), RoundingMode.HALF_UP); // Divide by same count
+            } else {
+                // User is rating for the first time
+                updatedRating = userExistingRating
+                        .multiply(BigDecimal.valueOf(noOfUserRating))
+                        .add(newRating)
+                        .divide(BigDecimal.valueOf(noOfUserRating + 1), RoundingMode.HALF_UP);
+                register.setNoOfRating(noOfUserRating + 1); // Increase count only for new users
+            }
         } else {
-            // If no ratings exist, directly set the new rating
+            // No ratings exist, directly set the new rating
             updatedRating = rating.getRating();
+            register.setNoOfRating(1); // First rating
         }
 
         // Update register object
         register.setRating(updatedRating);
-        register.setNoOfRating(noOfUserRating + 1);
-
         return register;
     }
+
 }

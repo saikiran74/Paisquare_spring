@@ -28,11 +28,11 @@ public class Likecontrol {
     public Likes like(@RequestBody Likes like,@PathVariable("userid") Long userid,@PathVariable("advertisementid") Long advertisementid) throws Exception{
         Likes likeobj=null;
         Optional<Advertise> advertismentmodel = adrepo.findById(advertisementid);
-        Optional<Register> registermodel = registerRepo.findById(userid);
+        Optional<Register> registermodel = registerRepo.findByUserId(userid);
         if(advertismentmodel.isPresent() && registermodel.isPresent()){
             Advertise advertise=advertismentmodel.get();
             Register register =registermodel.get();
-            Optional<Register> AdvertiserInRegisterModel = registerRepo.findById(userid);
+            Optional<Register> AdvertiserInRegisterModel = registerRepo.findByUserId(userid);
             Register advertiserInRegister =AdvertiserInRegisterModel.get();
             like.setAdvertisement(advertise);
             like.setUser(register);
@@ -78,14 +78,15 @@ public class Likecontrol {
     }
     @GetMapping("/likesgraph/{userid}/{period}")
     public List<Object[]> likegraph(@PathVariable("userid") Long userid,@PathVariable("period") String period) throws Exception {
+        Long registerUserId=registerRepo.findByUserId(userid).get().getId();
         if(Objects.equals(period, "weekly")){
-            return likerepo.weeklygraph(userid);
+            return likerepo.weeklygraph(registerUserId);
         } else if (Objects.equals(period, "lastmonth")) {
-            return likerepo.lastmonth(userid);
+            return likerepo.lastmonth(registerUserId);
         } else if (Objects.equals(period, "thismonth")) {
-            return likerepo.thismonth(userid);
+            return likerepo.thismonth(registerUserId);
         } else if (Objects.equals(period, "Today")) {
-            return likerepo.today(userid);
+            return likerepo.today(registerUserId);
         }
         else{
             return likerepo.yearlygraph(userid);

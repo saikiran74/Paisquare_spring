@@ -151,7 +151,7 @@ public class Registationcontrol {
 
     @GetMapping("profile/{userid}")
     public Optional<Register> getAllAdvertisements(@PathVariable("userid") Long userid) {
-        return registerRepo.findById(userid);
+        return registerRepo.findByUserId(userid);
     }
     @PostMapping("updateProfile/brandInformation/{userid}")
     public Register brandInformation(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {

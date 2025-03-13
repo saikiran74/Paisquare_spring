@@ -4,6 +4,8 @@ import com.paisa_square.paisa.model.Advertise;
 import com.paisa_square.paisa.model.Comments;
 import com.paisa_square.paisa.repository.Advertiserepository;
 import com.paisa_square.paisa.repository.Commentrepository;
+import com.paisa_square.paisa.repository.Registerrepository;
+import com.paisa_square.paisa.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,6 +18,9 @@ public class Advertiseservice {
     private Advertiserepository adrepo;
     @Autowired
     private Commentrepository commentrepo;
+    @Autowired
+    private Registerrepository registerrepo;
+
     public Optional<Advertise> fetchId(Long id){
         return adrepo.findById(id);
     }
@@ -29,7 +34,8 @@ public class Advertiseservice {
         return commentrepo.findByadvertiseId(advertisementid);
     }
     public List<Advertise> findAllByadvertiserId(Integer userid){
-        return adrepo.findByadvertiserId(userid);
+        Long registerId=registerrepo.findByUserId(Long.valueOf(userid)).get().getId();
+        return adrepo.findByadvertiserId(Math.toIntExact(registerId));
     }
 
     public List<Advertise> searchAds(String query) {
