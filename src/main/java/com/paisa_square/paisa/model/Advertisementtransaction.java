@@ -34,4 +34,16 @@ public class Advertisementtransaction {
 
     public void save(Advertisementtransaction trans) {
     }
+    public void setAdvertisementpaisa(BigDecimal advertisementpaisa) {
+        if (advertisementpaisa.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Advertisement Paisa cannot be negative");
+        }
+        this.advertisementpaisa = advertisementpaisa;
+    }
+    public void setAdvertisementpai(BigDecimal advertisementpai) {
+        if (advertisementpai.compareTo(BigDecimal.ZERO) < 0) {
+            throw new IllegalArgumentException("Advertisement Pai cannot be negative");
+        }
+        this.advertisementpai = advertisementpai;
+    }
 }

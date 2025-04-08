@@ -80,7 +80,7 @@ public class Registerservice {
                             "Best regards,\n" +
                             "Pai Square Team\n" +
                             paiSquareOfcEmail+"\n" +
-                            "www.paisquare.in"
+                            "www.paisquare.com"
             );
             mailSender.send(message);
             emailResponse="emailSent";
@@ -124,7 +124,7 @@ public class Registerservice {
                 "Best regards,\n" +
                 "Pai Square Team\n" +
                 paiSquareOfcEmail+"\n" +
-                "www.paisquare.in"
+                "www.paisquare.com"
             );
             mailSender.send(message);
         } catch (MailException | MessagingException e) {
@@ -188,14 +188,14 @@ public class Registerservice {
         rating.setUser(registerModel.get());
         if (ratingModel.isPresent()) {
             // Update existing rating
-            BigDecimal existingRatingByUser=ratingModel.get().getRating();
+            BigDecimal existingRatingByUser=registerModelAdvertiser.get().getRating();
             Profilerating existingRatingModel = ratingModel.get();
             existingRatingModel.setRating(rating.getRating());
 
             profileratingrepo.save(existingRatingModel);
 
             // Update rating in Register
-            Register register = updateRatingInRegister(false,existingRatingByUser, rating, registerModel.get());
+            Register register = updateRatingInRegister(false,existingRatingByUser, rating, registerModelAdvertiser.get());
             registerRepository.save(register);
 
         } else {

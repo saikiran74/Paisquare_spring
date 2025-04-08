@@ -3,6 +3,7 @@ com\paisa_square\paisa\config\WebSocketConfig.class
 com\paisa_square\paisa\model\Blockedadvertiser.class
 com\paisa_square\paisa\service\ChatService.class
 com\paisa_square\paisa\repository\Contactusrepository.class
+com\paisa_square\paisa\controller\Payments.class
 com\paisa_square\paisa\service\Commentservice.class
 com\paisa_square\paisa\model\Chat.class
 com\paisa_square\paisa\repository\Advertiserepository.class
@@ -14,6 +15,7 @@ com\paisa_square\paisa\controller\Contactuscontrol.class
 com\paisa_square\paisa\controller\Reportcontrol.class
 com\paisa_square\paisa\model\Advertisementtransaction.class
 com\paisa_square\paisa\repository\Advertisementtransactionrepository.class
+com\paisa_square\paisa\model\enums\PaymentMethod.class
 com\paisa_square\paisa\model\User.class
 com\paisa_square\paisa\model\Likes.class
 com\paisa_square\paisa\config\SecurityConfig.class
@@ -29,7 +31,7 @@ com\paisa_square\paisa\config\JwtUtil.class
 com\paisa_square\paisa\model\Visits.class
 com\paisa_square\paisa\service\Contactusservice.class
 com\paisa_square\paisa\model\Contactus.class
-com\paisa_square\paisa\controller\Advertisementtransactioncontrol.class
+com\paisa_square\paisa\model\enums\PaymentStatus.class
 com\paisa_square\paisa\service\GoogleSitemapPingService.class
 com\paisa_square\paisa\service\Advertiseservice.class
 com\paisa_square\paisa\model\Accounts.class
@@ -41,9 +43,11 @@ com\paisa_square\paisa\controller\Favouritescontrol.class
 com\paisa_square\paisa\repository\Profileratingrepository.class
 com\paisa_square\paisa\model\Accounts$AccountsBuilder.class
 com\paisa_square\paisa\model\Role.class
+com\paisa_square\paisa\model\Payment.class
 com\paisa_square\paisa\DTO\ChatHistoryUsersDTO.class
 com\paisa_square\paisa\model\Register.class
 com\paisa_square\paisa\controller\Advertisecontrol.class
+com\paisa_square\paisa\repository\PaymentRepository.class
 com\paisa_square\paisa\controller\Registationcontrol.class
 com\paisa_square\paisa\model\Advertise.class
 com\paisa_square\paisa\model\Report.class

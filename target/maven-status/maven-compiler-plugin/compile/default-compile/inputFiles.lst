@@ -1,5 +1,6 @@
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Reportrepository.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\config\JwtAuthenticationFilter.java
+F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\enums\PaymentStatus.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Profilerating.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\ChatController.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\service\ChatService.java
@@ -7,8 +8,11 @@ F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\DTO\ChatHistoryUsersDTO
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Contactuscontrol.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Favourites.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Followers.java
+F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\enums\PaymentMethod.java
+F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Payments.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Favouritescontrol.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\ChatRepository.java
+F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\PaymentRepository.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\config\WebSocketConfig.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Accounts.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Registationcontrol.java
@@ -17,7 +21,6 @@ F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\config\JwtUtil.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\ApiMessage.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\SitemapController.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Advertisementtransactionrepository.java
-F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Advertisementtransactioncontrol.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Blockedadvertiser.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Blockedrepository.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\service\Commentservice.java
@@ -47,6 +50,7 @@ F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Commentrepos
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Likerepository.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\PaisaApplication.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\Followerrepository.java
+F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\model\Payment.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\controller\Commentscontrol.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\repository\UserRepository.java
 F:\Paisquare_spring\src\main\java\com\paisa_square\paisa\service\Contactusservice.java

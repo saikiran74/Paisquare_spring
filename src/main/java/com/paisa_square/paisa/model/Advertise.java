@@ -82,7 +82,7 @@ public class Advertise {
             // Filter out stop words and limit to 6 keywords
             String slugBase = Arrays.stream(words)
                     .filter(word -> !stopWords.contains(word))
-                    .limit(6)  // Keep only 6 meaningful words
+                    .limit(15)  // Keep only 6 meaningful words
                     .collect(Collectors.joining("-")); // Join with "-"
 
             // Normalize and remove special characters

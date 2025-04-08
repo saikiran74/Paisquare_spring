@@ -53,7 +53,6 @@ public class Advertisecontrol {
     }
     @GetMapping("/useradvertisements/{userid}")
     public List<Advertise> getUserAdvertisements(@PathVariable("userid") Integer userid) {
-        System.out.println("userid"+userid);
         return service.findAllByadvertiserId(userid);
     }
 
