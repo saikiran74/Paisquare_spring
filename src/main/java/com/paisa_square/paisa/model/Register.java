@@ -1,9 +1,7 @@
 package com.paisa_square.paisa.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -65,6 +63,10 @@ public class Register {
     private String brandEstablishedIn;
     private String brandCompanyEmployeeSize;
     private String pincode;
+    // Getter
+    // Setter
+    @Getter
+    @Setter
     private String accountType;
     private String[] brandHashTags;
     private String[] pinCodes;

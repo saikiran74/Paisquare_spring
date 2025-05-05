@@ -217,11 +217,48 @@ public class Registationcontrol {
         }
         return userprofileobj;
     }
+    /**@PostMapping("updateProfile/accounttype/{userid}")
+    public Register brandAccountType(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> userProfile = registerRepo.findByUserId(userid);
+        Register userprofileobj = null;
+        if (userProfile.isPresent()) {
+            userprofileobj = userProfile.get();
+            userprofileobj.setAccountType(profile.getAccountType());
+            registerRepo.save(userprofileobj);
+        }
+        return userprofileobj;
+    } **/
+    @PostMapping("updateProfile/accounttype/{userid}")
+    public ResponseEntity brandAccountType(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
+        Optional<Register> registerProfile = registerRepo.findByUserId(userid);
+        Optional<User> userProfile = userRepo.findById(userid);
+        Register registerProfileObj = null;
+        User userProfileObj = null;
+
+        Map<String, Object> response = new HashMap<>();
+        if (registerProfile.isPresent() && userProfile.isPresent()) {
+            registerProfileObj = registerProfile.get();
+            userProfileObj = userProfile.get();
+            registerProfileObj.setAccountType(profile.getAccountType());
+            userProfileObj.setAccountType(profile.getAccountType());
+            registerRepo.save(registerProfileObj);
+            userRepo.save(userProfileObj);
+
+            String token = jwtUtil.generateToken(userProfileObj.getEmail());
+            response.put("token",token);
+
+            System.out.println("Account type updated to: " + registerProfileObj.getAccountType()); // ✅ Add this line
+        }
+        response.put("user", registerProfile);
+        return ResponseEntity.ok(response);
+        // ✅ Return updated profile
+    }
 
 
     @PostMapping("updateProfile/socialMediaLinks/{userid}")
     public Register socialMediaLinks(@RequestBody Register profile, @PathVariable("userid") Long userid) throws Exception {
         Optional<Register> userProfile = registerRepo.findByUserId(userid);
+
         Register userprofileobj = null;
         if (userProfile.isPresent()) {
             userprofileobj = userProfile.get();
