@@ -246,8 +246,6 @@ public class Registationcontrol {
 
             String token = jwtUtil.generateToken(userProfileObj.getEmail());
             response.put("token",token);
-
-            System.out.println("Account type updated to: " + registerProfileObj.getAccountType()); // ✅ Add this line
         }
         response.put("user", registerProfile);
         return ResponseEntity.ok(response);
@@ -274,6 +272,11 @@ public class Registationcontrol {
     @GetMapping("userdata/{userid}")
     public Optional<Register> findUserProfile(@PathVariable("userid") Long userId){
         return registerRepo.findByUserId(userId);
+    }
+
+    @GetMapping("advertiser_profile/{userid}")
+    public Optional<Register> findAdvertiserProfile(@PathVariable("userid") Long userId){
+        return registerRepo.findById(userId);
     }
     private static final long MAX_FILE_SIZE = 5 * 1024 * 1024;
     @PostMapping("updateProfile/upload-image/{id}")
@@ -312,6 +315,8 @@ public class Registationcontrol {
     }
     @PostMapping("/rating/{userid}/{advertiserid}")
     public Optional<Register> rating(@RequestBody Profilerating rating, @PathVariable("userid") Long userid, @PathVariable("advertiserid") Long advertiserid) throws Exception{
+        System.out.println("userid"+userid);
+        System.out.println("advertiserid"+advertiserid);
         registerService.saveRating(rating,userid,advertiserid);
         return registerRepo.findByUserId(userid);
     }

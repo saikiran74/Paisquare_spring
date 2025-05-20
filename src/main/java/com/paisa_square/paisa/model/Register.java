@@ -68,8 +68,8 @@ public class Register {
     @Getter
     @Setter
     private String accountType;
-    private String[] brandHashTags;
-    private String[] pinCodes;
+    private String brandHashTags;
+    private String pinCodes;
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @Column(columnDefinition = "LONGBLOB")

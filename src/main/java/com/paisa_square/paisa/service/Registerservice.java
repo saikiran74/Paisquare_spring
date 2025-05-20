@@ -158,7 +158,7 @@ public class Registerservice {
 
     public void saveProfileImage(Long id, MultipartFile image) throws IOException {
         // Fetch the Register object by id
-        Register register = registerRepository.findById(id)
+        Register register = registerRepository.findByUserId(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         // Get the image bytes from MultipartFile
@@ -173,7 +173,7 @@ public class Registerservice {
 
 
     public byte[] getProfileImage(Long id) {
-        Register register = registerRepository.findById(id)
+        Register register = registerRepository.findByUserId(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         return register.getProfileImage();
     }
@@ -181,8 +181,8 @@ public class Registerservice {
 
     public Boolean saveRating(Profilerating rating, Long userid, Long advertiserid) throws Exception {
         Optional<Register> registerModel = registerRepository.findByUserId(userid);
-        Optional<Register> registerModelAdvertiser = registerRepository.findByUserId(advertiserid);
-        Optional<Profilerating> ratingModel = profileratingrepo.findByUserIdAndAdvertiserId(userid, advertiserid);
+        Optional<Register> registerModelAdvertiser = registerRepository.findById(advertiserid);
+        Optional<Profilerating> ratingModel = profileratingrepo.findByUserIdAndAdvertiserId(registerModel.get().getId(), registerModelAdvertiser.get().getId());
         rating.setAdvertiser(registerModelAdvertiser.get());
         rating.setUser(registerModel.get());
         if (ratingModel.isPresent()) {
@@ -194,15 +194,14 @@ public class Registerservice {
             profileratingrepo.save(existingRatingModel);
 
             // Update rating in Register
-            Register register = updateRatingInRegister(false,existingRatingByUser, rating, registerModel.get());
+            Register register = updateRatingInRegister(false,existingRatingByUser, rating, registerModelAdvertiser.get());
             registerRepository.save(register);
 
         } else {
             // Save new rating
             profileratingrepo.save(rating);
-
             // If register model is present, update it
-            registerModel.ifPresent(register -> {
+            registerModelAdvertiser.ifPresent(register -> {
                 Register updatedRegister = updateRatingInRegister(true, BigDecimal.valueOf(0),rating, register);
                 registerRepository.save(updatedRegister);
             });

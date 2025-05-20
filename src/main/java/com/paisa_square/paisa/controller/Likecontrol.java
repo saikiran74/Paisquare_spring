@@ -93,7 +93,6 @@ public class Likecontrol {
         }
     }
     @GetMapping("/getlikedadvertisementslist/{userid}")
-    @CrossOrigin(origins = "http://localhost:4200")
     public List<Advertise> getlikedadvertisementslist(@PathVariable("userid") Integer userid) {
         return adrepo.findAllBylikes(userid);
     }

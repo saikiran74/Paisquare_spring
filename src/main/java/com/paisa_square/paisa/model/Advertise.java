@@ -52,6 +52,7 @@ public class Advertise {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn()
     private Register advertiser;
+    private Integer userid=0;
     @ElementCollection
     private List<Long> favourites = new ArrayList<>();
     @Getter

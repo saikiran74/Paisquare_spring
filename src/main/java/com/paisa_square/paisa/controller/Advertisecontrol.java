@@ -83,6 +83,7 @@ public class Advertisecontrol {
                     ad.setAvailablepaisa(ad.getPaisa());
                     ad.setHashtags(ad.getHashtags());
                     ad.setPincodes(ad.getPincodes());
+                    ad.setUserid(Math.toIntExact(userid));
                     registerRepo.save(register);
                     trans=service.savead(ad);
                     Advertisementtransaction transaction=new Advertisementtransaction();
@@ -120,6 +121,9 @@ public class Advertisecontrol {
 
         // Split each hashtag string by commas and count occurrences
         for (String hashtags : allHashtags) {
+            if (hashtags == null || hashtags.trim().isEmpty()) {
+                continue;
+            }
             String[] hashtagArray = hashtags.split(",");  // Assuming comma as separator
             for (String hashtag : hashtagArray) {
                 hashtag = hashtag.trim();  // Remove any extra spaces
